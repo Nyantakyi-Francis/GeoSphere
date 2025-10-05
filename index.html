@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GeoSphere</title>
-
-
+    <meta name="description" content="GeoSphere - Explore local news and fun facts from around the world" />
+    <title>GeoSphere - Local News & Geography Trivia</title>
 
     <!-- Mapbox -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet" />
@@ -30,42 +29,175 @@
         </h1>
         <form id="searchForm" class="flex">
             <input id="searchInput" type="text" placeholder="Search location..."
-                class="p-2 rounded-l-md border border-gray-300 text-black" />
-            <button type="submit" class="bg-white text-teal-600 px-4 rounded-r-md font-bold">Search</button>
+                class="p-2 rounded-l-md border border-gray-300 text-black" autocomplete="off" />
+            <button type="submit"
+                class="bg-white text-teal-600 px-4 rounded-r-md font-bold hover:bg-gray-100 transition">
+                Search
+            </button>
         </form>
     </header>
 
-    <!-- Location Label -->
-    <section class="p-4">
-        <h2 id="locationLabel" class="text-lg font-semibold">News for your location</h2>
-    </section>
+    <!-- Main Container -->
+    <div class="max-w-7xl mx-auto">
 
-    <!-- Map -->
-    <section class="p-4">
-        <div id="map" style="width: 100%; height: 300px;" class="rounded-lg shadow"></div>
-    </section>
+        <!-- Location Label & Favorite Button -->
+        <section class="p-4 flex justify-between items-center">
+            <div>
+                <h2 id="locationLabel" class="text-lg font-semibold">News for your location</h2>
+                <p class="text-sm text-gray-500 mt-1">Search for any city to explore local news and trivia</p>
+            </div>
+            <button id="addFavoriteBtn"
+                class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition transform hover:scale-105">
+                ⭐ Add to Favorites
+            </button>
+        </section>
 
-    <!-- Tabs -->
-    <section class="p-4">
-        <div class="flex gap-4 border-b">
-            <button id="tabNews" class="tab-btn active-tab border-b-2 pb-2">Local News</button>
-            <button id="tabFacts" class="tab-btn pb-2">Fun Facts</button>
-        </div>
-    </section>
+        <!-- Map -->
+        <section class="p-4">
+            <div id="map" style="width: 100%; height: 400px;" class="rounded-lg shadow-lg border-2 border-gray-200">
+            </div>
+            <p class="text-xs text-gray-500 mt-2 text-center">
+                📍 Click and drag to explore • Scroll to zoom
+            </p>
+        </section>
 
-    <!-- News Section -->
-    <section id="newsSection" class="p-4">
-        <div id="news" class="grid gap-4"></div>
-    </section>
+        <!-- Favorites Section -->
+        <section class="p-4">
+            <div class="bg-white rounded-lg shadow p-4">
+                <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
+                    <span>⭐</span>
+                    <span>Favorite Locations</span>
+                </h3>
+                <div id="favoritesList" class="mb-2"></div>
+                <p class="text-xs text-gray-500 mt-2">
+                    💡 Tip: Click on any favorite to quickly load its news and trivia
+                </p>
+            </div>
+        </section>
 
-    <!-- Fun Facts Section (hidden by default) -->
-    <section id="factsSection" class="p-4 hidden">
-        <p id="fact" class="mb-4 p-4 bg-white rounded shadow">Click the button for a fun fact!</p>
-        <button id="factBtn" class="bg-teal-600 text-white px-4 py-2 rounded">Get Random Fact</button>
-    </section>
+        <!-- Tabs -->
+        <section class="p-4">
+            <div class="flex gap-4 border-b-2 border-gray-200">
+                <button id="tabNews" class="tab-btn active-tab pb-2 px-4 transition">
+                    📰 Local News
+                </button>
+                <button id="tabFacts" class="tab-btn pb-2 px-4 transition">
+                    🎲 Fun Trivia
+                </button>
+            </div>
+        </section>
+
+        <!-- News Section -->
+        <section id="newsSection" class="p-4">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold mb-2">Latest News Articles</h3>
+                <p class="text-sm text-gray-600">Stay updated with the latest news from your selected location</p>
+            </div>
+            <div id="news" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- News cards will be inserted here -->
+                <div class="p-8 bg-white rounded shadow text-center">
+                    <div class="animate-pulse">
+                        <div class="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
+                        <div class="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
+                    </div>
+                    <p class="text-gray-500 mt-4">Loading news...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fun Facts/Trivia Section (hidden by default) -->
+        <section id="factsSection" class="p-4 hidden">
+            <div class="mb-4">
+                <h3 class="text-lg font-bold mb-2">Geography & World Trivia</h3>
+                <p class="text-sm text-gray-600">Test your knowledge with interesting trivia questions!</p>
+            </div>
+
+            <div id="fact" class="mb-4 p-4 bg-white rounded shadow">
+                <p class="text-gray-500 text-center">Click the button below to get a fun trivia question!</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button id="factBtn"
+                    class="bg-teal-600 text-white px-6 py-3 rounded font-semibold hover:bg-teal-700 transition transform hover:scale-105">
+                    🎲 Get New Trivia Question
+                </button>
+                <button id="geographyTriviaBtn"
+                    class="bg-blue-600 text-white px-6 py-3 rounded font-semibold hover:bg-blue-700 transition transform hover:scale-105">
+                    🌍 Geography Trivia
+                </button>
+            </div>
+
+            <div class="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
+                <p class="text-sm text-blue-800">
+                    💡 <strong>How to play:</strong> Read the question and click on one of the answer options.
+                    You'll see if you got it right immediately!
+                </p>
+            </div>
+        </section>
+
+        <!-- Footer / Info Section -->
+        <section class="p-4 mt-8">
+            <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-teal-500">
+                <h3 class="text-lg font-bold mb-3 text-teal-700">About GeoSphere</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <p class="font-semibold mb-1 text-gray-800">🗺️ Interactive Maps</p>
+                        <p class="text-gray-600">Explore locations worldwide with Mapbox</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold mb-1 text-gray-800">📰 Real-Time News</p>
+                        <p class="text-gray-600">Stay informed with WorldNewsAPI</p>
+                    </div>
+                    <div>
+                        <p class="font-semibold mb-1 text-gray-800">🎓 Educational Trivia</p>
+                        <p class="text-gray-600">Learn with OpenTriviaDB questions</p>
+                    </div>
+                </div>
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <p class="text-xs text-gray-600">
+                        💾 Your preferences and favorites are saved locally and persist across sessions
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Debug Info (Remove in production) -->
+        <section class="p-4">
+            <details class="bg-gray-800 text-white rounded p-3 text-xs">
+                <summary class="cursor-pointer font-bold">🔧 Debug Info (Click to expand)</summary>
+                <div id="debugInfo" class="mt-2 space-y-1">
+                    <p>LocalStorage Status: <span id="storageStatus">Checking...</span></p>
+                    <p>Favorites Count: <span id="favCount">0</span></p>
+                    <p>Last Search: <span id="lastSearchInfo">None</span></p>
+                    <p>APIs: Mapbox, WorldNews, OpenTrivia, Numbers API</p>
+                </div>
+            </details>
+        </section>
+
+    </div>
 
     <!-- App JS -->
     <script type="module" src="./js/app.js"></script>
+
+    <!-- Debug Script -->
+    <script type="module">
+        import { getFavorites, getLastSearch, getStorageInfo } from './js/modules/storage.js';
+
+        // Update debug info
+        setTimeout(() => {
+            try {
+                const storageInfo = getStorageInfo();
+                document.getElementById('storageStatus').textContent = '✓ Working';
+                document.getElementById('favCount').textContent = storageInfo.favorites;
+                const lastSearch = storageInfo.lastSearch;
+                document.getElementById('lastSearchInfo').textContent =
+                    lastSearch ? `${lastSearch.city} (${new Date(lastSearch.searchedAt).toLocaleString()})` : 'None';
+            } catch (e) {
+                document.getElementById('storageStatus').textContent = '✗ Error: ' + e.message;
+            }
+        }, 1000);
+    </script>
+
 </body>
 
 </html>
