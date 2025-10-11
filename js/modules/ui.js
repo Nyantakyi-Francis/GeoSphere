@@ -31,26 +31,26 @@ export function renderNewsCards(articles) {
 
     articles.forEach((article, index) => {
         const card = document.createElement('div');
-        card.className = 'news-card';
+        card.className = 'news-card news-card-squared';
         card.style.animationDelay = `${index * 0.1}s`;
 
         card.innerHTML = `
             ${article.imageUrl ? `
                 <img src="${article.imageUrl}" 
                      alt="${escapeHtml(article.title)}" 
-                     class="w-full h-48 object-cover mb-2 rounded"
-                     onerror="this.src='https://picsum.photos/400/200?random=${index}'"
+                     class="w-full h-64 object-contain bg-gray-50 mb-2 rounded"
+                     onerror="this.src='https://picsum.photos/400/400?random=${index}'"
                 />
             ` : ''}
-            <div class="p-2">
-                <h3 class="text-lg font-bold mb-1">${escapeHtml(article.title)}</h3>
+            <div class="p-3">
+                <h3 class="text-lg font-bold mb-2">${escapeHtml(article.title)}</h3>
                 ${article.source ? `
                     <p class="text-gray-500 text-sm mb-2">
                         ${escapeHtml(article.source)}
                         ${article.author ? ` • ${escapeHtml(article.author)}` : ''}
                     </p>
                 ` : ''}
-                <p class="text-gray-700 mb-2">${escapeHtml(article.description || 'No description available')}</p>
+                <p class="text-gray-700 mb-3 line-clamp-3">${escapeHtml(article.description || 'No description available')}</p>
                 <a href="${escapeHtml(article.url)}" 
                    target="_blank" 
                    rel="noopener noreferrer"
