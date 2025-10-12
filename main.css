@@ -399,3 +399,139 @@ svg {
     stroke-linejoin: round;
     fill: none;
 }
+
+
+
+.app-footer {
+    color: black;
+    background: white;
+    margin-top: 3rem;
+    padding: 2rem 0;
+    border-top: 1px solid black;
+}
+
+.footer-inner-container {
+    max-width: 80rem;
+    /* max-w-7xl equivalent for large containers */
+    margin: 0 auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+}
+
+.footer-section {
+    flex: 1 1 33.33%;
+    text-align: center;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.footer-contact {
+    padding-right: 1.5rem;
+    border-right: 1px solid black;
+    padding-left: 0;
+    /* Align first item correctly */
+}
+
+.footer-links {
+    border-right: 1px solid black;
+}
+
+.footer-about {
+    padding-right: 0;
+    /* Align last item correctly */
+}
+
+.footer-heading {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.75rem;
+}
+
+.footer-developer-name {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.footer-developer-title {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.footer-links-group {
+    line-height: 1.5;
+}
+
+.footer-link {
+    display: block;
+    font-size: 0.8rem;
+    color: blue;
+    text-decoration: underline;
+}
+
+.quick-links-list-wrap {
+    display: inline-block;
+}
+
+.quick-links-list {
+    list-style-type: disc;
+    margin-left: 1.25rem;
+    padding: 0;
+    text-align: left;
+}
+
+.quick-links-item {
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.footer-about-text {
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+.footer-copyright {
+    border-top: 1px solid black;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    text-align: center;
+}
+
+.footer-copyright-text {
+    font-size: 0.8rem;
+    color: #555;
+}
+
+/* Responsive adjustments for mobile devices */
+@media (max-width: 768px) {
+    .footer-inner-container {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .footer-section {
+        flex: 1 1 100%;
+        width: 100%;
+        padding-left: 0;
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 1.5rem;
+    }
+
+    .footer-section:last-child {
+        border-bottom: none;
+    }
+
+    .footer-contact {
+        border-right: none;
+    }
+}

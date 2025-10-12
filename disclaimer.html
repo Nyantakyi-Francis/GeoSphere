@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GeoSphere Disclaimer - Terms, conditions, and legal information">
+    <title>Disclaimer - GeoSphere</title>
+    <link rel="icon" href="logo.png" type="image/png">
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            /* Equivalent to bg-gray-100 */
+            color: #333;
+            /* Equivalent to text-gray-800 */
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            padding: 1rem;
+            background-color: #0d9488;
+            /* Equivalent to bg-teal-600 */
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .search-form {
+            display: flex;
+        }
+
+        .search-input {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 0.25rem 0 0 0.25rem;
+            color: black;
+        }
+
+        .search-button {
+            background-color: white;
+            color: #0d9488;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0 0.25rem 0.25rem 0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .main-container {
+            max-width: 80rem;
+            /* Adjusted for large container */
+            margin: 0 auto;
+            padding: 1.5rem;
+        }
+
+        /* Disclaimer Page Specific Styles (Kept as requested) */
+        .disclaimer-section {
+            background: white;
+            border-left: 4px solid #0d9488;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .disclaimer-section h3 {
+            color: #0d9488;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .disclaimer-section p,
+        .disclaimer-section ul {
+            color: #374151;
+            line-height: 1.8;
+            margin-bottom: 0.75rem;
+        }
+
+        .disclaimer-section ul {
+            list-style-type: disc;
+            margin-left: 1.5rem;
+        }
+
+        .legal-text {
+            font-size: 0.95rem;
+            text-align: justify;
+        }
+
+        /* Back to Home Button Styling */
+        .back-home-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #0d9488;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            text-decoration: none;
+            transition: transform 0.2s;
+        }
+
+        .back-home-button:hover {
+            background-color: #0b7a6f;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="header">
+        <h1>
+            <svg style="width: 1.5rem; height: 1.5rem;" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z">
+                    <path d="M2 12h20">
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+            </svg>
+            GeoSphere
+
+    </header>
+
+    <div class="main-container">
+
+        <div style="text-align: center; margin-bottom: 2rem; margin-top: 1.5rem;">
+            <h1 style="font-size: 2.25rem; font-weight: bold; color: #333; margin-bottom: 0.75rem;">Legal Disclaimer
+            </h1>
+            <p style="color: #666;">Important Information Regarding the Use of GeoSphere</p>
+            <p style="font-size: 0.75rem; color: #999; margin-top: 0.5rem;">Last Updated: October 12, 2025</p>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+            <a href="index.html" class="back-home-button">
+                Back to Home
+            </a>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>📋 General Disclaimer</h3>
+            <div class="legal-text">
+                <p>
+                    The information contained on the GeoSphere website (the "Service") is for general information and
+                    educational purposes only. By accessing and using this Service, you acknowledge and agree to be
+                    bound by the terms and conditions set forth in this Disclaimer.
+                </p>
+                <p>
+                    GeoSphere is provided by Francis Nyantakyi ("I," "me," or "my"). While I strive to provide accurate
+                    and up-to-date information, I make no representations or warranties of any kind, express or implied,
+                    about the completeness, accuracy, reliability, suitability, or availability of the information,
+                    products, services, or related graphics contained on the Service.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>📰 Information Accuracy & Purpose</h3>
+            <div class="legal-text">
+                <p><strong>News Content:</strong></p>
+                <p>
+                    All news articles and information displayed on GeoSphere are sourced from third-party news APIs and
+                    content providers. The news content is provided for informational purposes only and should not be
+                    relied upon as the sole source of information for making decisions. I do not verify, endorse, or
+                    guarantee the accuracy, completeness, or timeliness of any news content displayed.
+                </p>
+
+                <p><strong>Trivia & Educational Content:</strong></p>
+                <p>
+                    The trivia questions and geographical information provided through our Service are intended solely
+                    for entertainment and educational purposes. While we endeavor to present accurate information,
+                    trivia content may contain errors or outdated information. Users should not rely on trivia content
+                    for academic, professional, or critical decision-making purposes.
+                </p>
+
+                <p><strong>Geographic Data:</strong></p>
+                <p>
+                    Geographic information, including maps, location data, and coordinates, are provided by third-party
+                    mapping services and APIs. The accuracy of geographic data may vary and should not be used for
+                    navigation, emergency services, or situations where precise location data is critical to safety or
+                    decision-making.
+                </p>
+
+                <div
+                    style="background: #f0fdfa; border: 1px solid #5eead4; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+                    <p style="font-weight: bold; color: #147575; margin-bottom: 0.5rem;">⚠️ Important Notice:</p>
+                    <p style="font-size: 0.875rem;">
+                        Users are strongly advised to independently verify any information obtained from GeoSphere
+                        before making decisions based upon such information. We recommend consulting official sources,
+                        professional advisors, or subject matter experts for critical matters.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>🔗 Third-Party Content & APIs</h3>
+            <div class="legal-text">
+                <p>
+                    GeoSphere integrates content and services from various third-party providers and Application
+                    Programming Interfaces (APIs), including but not limited to:
+                </p>
+                <ul>
+                    <li><strong>Mapbox:</strong> Interactive mapping and geographic visualization services</li>
+                    <li><strong>WorldNewsAPI:</strong> News articles and current events information</li>
+                    <li><strong>OpenTriviaDB:</strong> Trivia questions and educational content</li>
+                    <li><strong>Numbers API:</strong> Mathematical and numerical facts</li>
+                </ul>
+                <p>
+                    I do not control, endorse, or assume responsibility for any third-party content, websites, products,
+                    or services. The inclusion of any third-party content does not imply my endorsement or affiliation.
+                    Users access third-party content at their own risk and should review the terms of service and
+                    privacy policies of these third-party providers.
+                </p>
+                <p>
+                    I am not responsible for the availability, accuracy, content, or functionality of third-party
+                    services. Third-party providers may modify, suspend, or discontinue their services at any time
+                    without notice, which may affect the functionality of GeoSphere.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>🌐 External Links Disclaimer</h3>
+            <div class="legal-text">
+                <p>
+                    GeoSphere may contain links to external websites, news sources, and other online resources that are
+                    not owned, controlled, or maintained by me. These links are provided for convenience and
+                    informational purposes only.
+                </p>
+                <p>
+                    I have no control over the nature, content, or availability of external sites. The inclusion of any
+                    links does not necessarily imply a recommendation or endorsement of the views, content, products, or
+                    services contained therein. I am not responsible for the content, privacy policies, terms of
+                    service, or practices of any external websites or resources.
+                </p>
+                <p>
+                    Users acknowledge that when they click on external links and leave GeoSphere, they do so at their
+                    own risk. I shall not be held liable for any damages, losses, or issues that may arise from
+                    accessing external websites or using external services.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>⚖️ No Warranties</h3>
+            <div class="legal-text">
+                <p>
+                    GeoSphere is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, either
+                    express or implied. To the fullest extent permissible pursuant to applicable law, I disclaim all
+                    warranties, express or implied, including but not limited to:
+                </p>
+                <ul>
+                    <li>Implied warranties of merchantability and fitness for a particular purpose</li>
+                    <li>Warranties regarding the accuracy, reliability, or completeness of content</li>
+                    <li>Warranties that the Service will be uninterrupted, timely, secure, or error-free</li>
+                    <li>Warranties regarding the results that may be obtained from the use of the Service</li>
+                    <li>Warranties regarding the quality of any products, services, information, or other material
+                        obtained through the Service</li>
+                </ul>
+                <p>
+                    I do not warrant that defects will be corrected, or that the Service or the servers that make it
+                    available are free of viruses or other harmful components. No advice or information, whether oral or
+                    written, obtained by users from me or through the Service shall create any warranty not expressly
+                    stated herein.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>🛡️ Limitation of Liability</h3>
+            <div class="legal-text">
+                <p>
+                    To the maximum extent permitted by applicable law, in no event shall Francis Nyantakyi, GeoSphere,
+                    or any affiliates, partners, employees, or agents be liable for any direct, indirect, incidental,
+                    special, consequential, or punitive damages, including but not limited to:
+                </p>
+                <ul>
+                    <li>Loss of profits, revenue, data, or use</li>
+                    <li>Business interruption or lost business opportunities</li>
+                    <li>Personal injury or property damage</li>
+                    <li>Costs of procurement of substitute goods or services</li>
+                    <li>Any other damages or losses arising out of or related to your use or inability to use the
+                        Service</li>
+                </ul>
+                <p>
+                    This limitation applies whether the alleged liability is based on contract, tort, negligence, strict
+                    liability, or any other basis, even if I have been advised of the possibility of such damage.
+                    Because some jurisdictions do not allow the exclusion or limitation of incidental or consequential
+                    damages, my liability in such jurisdictions shall be limited to the extent permitted by law.
+                </p>
+                <p>
+                    You specifically acknowledge that I shall not be liable for user submissions, content, or the
+                    defamatory, offensive, or illegal conduct of any third party, and that the risk of harm or damage
+                    from the foregoing rests entirely with you.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>💾 Data Storage & Privacy</h3>
+            <div class="legal-text">
+                <p><strong>Local Storage:</strong></p>
+                <p>
+                    GeoSphere stores certain user preferences and favorite locations locally in your web browser using
+                    browser storage technologies (localStorage). This data is stored exclusively on your device and is
+                    not transmitted to my servers or any third parties.
+                </p>
+                <p>
+                    Users are responsible for the security and backup of their locally stored data. I am not responsible
+                    for any loss of locally stored data that may occur due to browser clearing, device failure, software
+                    updates, or other technical issues.
+                </p>
+
+                <p><strong>No Personal Data Collection:</strong></p>
+                <p>
+                    GeoSphere does not collect, store, or process personally identifiable information (PII) through the
+                    Service itself. However, third-party services and APIs integrated into GeoSphere may collect data
+                    according to their own privacy policies. Users are encouraged to review the privacy policies of
+                    third-party providers.
+                </p>
+
+                <p><strong>Cookies & Tracking:</strong></p>
+                <p>
+                    Third-party services integrated into GeoSphere (such as Mapbox) may use cookies, tracking pixels, or
+                    similar technologies. I have no control over these technologies and am not responsible for the data
+                    collection practices of third-party providers.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>👤 Age Restrictions & User Conduct</h3>
+            <div class="legal-text">
+                <p><strong>Age Requirements:</strong></p>
+                <p>
+                    GeoSphere is intended for use by individuals aged 13 years and older. If you are under 13 years of
+                    age, you may only use the Service under the supervision of a parent or legal guardian who agrees to
+                    be bound by this Disclaimer on your behalf.
+                </p>
+                <p>
+                    Parents and guardians are responsible for monitoring and supervising their children's use of the
+                    Service. We recommend that parents and guardians actively participate in their children's online
+                    activities and educate them about safe and responsible internet use.
+                </p>
+
+                <p><strong>Acceptable Use:</strong></p>
+                <p>
+                    Users agree to use GeoSphere only for lawful purposes and in accordance with this Disclaimer. Users
+                    shall not:
+                </p>
+                <ul>
+                    <li>Use the Service in any way that violates any applicable local, national, or international law
+                    </li>
+                    <li>Attempt to gain unauthorized access to any portion of the Service or related systems</li>
+                    <li>Use the Service to transmit malicious code, viruses, or harmful software</li>
+                    <li>Interfere with or disrupt the integrity or performance of the Service</li>
+                    <li>Attempt to decipher, decompile, or reverse engineer any software comprising the Service</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>⚕️ Not Professional Advice</h3>
+            <div class="legal-text">
+                <p>
+                    The information provided through GeoSphere is not intended to be, and should not be construed as,
+                    professional advice of any kind, including but not limited to legal, financial, medical,
+                    educational, or career advice.
+                </p>
+                <p>
+                    Users should consult with qualified professionals in relevant fields before making decisions based
+                    on information obtained through the Service. I expressly disclaim any liability for decisions made
+                    or actions taken based on information obtained through GeoSphere.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>📝 Changes to This Disclaimer</h3>
+            <div class="legal-text">
+                <p>
+                    I reserve the right to modify, update, or replace this Disclaimer at any time without prior notice.
+                    Changes will be effective immediately upon posting to the Service. The "Last Updated" date at the
+                    top of this page indicates when this Disclaimer was last revised.
+                </p>
+                <p>
+                    Your continued use of GeoSphere following the posting of any changes constitutes acceptance of those
+                    changes. I encourage users to review this Disclaimer periodically to stay informed about how I am
+                    protecting the information and limiting my liability.
+                </p>
+                <p>
+                    If I make material changes to this Disclaimer, I may notify users through a prominent notice on the
+                    Service or through other reasonable means. However, it is your responsibility to check this
+                    Disclaimer regularly for updates.
+                </p>
+            </div>
+        </div>
+
+        <div class="disclaimer-section">
+            <h3>📞 Contact Information</h3>
+            <div class="legal-text">
+                <p>
+                    If you have any questions, concerns, or comments regarding this Disclaimer or the GeoSphere Service,
+                    please contact me:
+                </p>
+                <div
+                    style="background: #f0fdfa; border: 1px solid #5eead4; padding: 1rem; border-radius: 0.5rem; margin: 1rem 0;">
+                    <p><strong>Francis Nyantakyi</strong></p>
+                    <p>Admin/Developer - GeoSphere</p>
+                    <p style="margin-top: 0.5rem;">
+                        <strong>Email:</strong> <a href="mailto:nyantakyifrancis54@gmail.com"
+                            style="color: #0d9488; text-decoration: underline;">nyantakyifrancis54@gmail.com</a>
+                    </p>
+                    <p>
+                        <strong>Phone:</strong> <a href="tel:+233595715528"
+                            style="color: #0d9488; text-decoration: underline;">+233 595 715 528</a>
+                    </p>
+                    <p>
+                        <strong>WhatsApp:</strong> <a
+                            href="https://wa.me/233595715528?text=Hello%20Francis%2C%0A%0AI%20have%20a%20question%20regarding%20the%20GeoSphere%20Disclaimer%3A%0A%0A"
+                            target="_blank" style="color: #0d9488; text-decoration: underline;">Message on WhatsApp</a>
+                    </p>
+                </div>
+                <p>
+                    I will make reasonable efforts to respond to inquiries in a timely manner. However, please note that
+                    responses to inquiries do not constitute legal advice and should not be relied upon as such.
+                </p>
+            </div>
+        </div>
+
+        <div
+            style="background: #fffbe5; border-left: 4px solid #f59e0b; padding: 1.5rem; border-radius: 0.5rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); margin-bottom: 2rem;">
+            <h3 style="font-size: 1.125rem; font-weight: bold; color: #b45309; margin-bottom: 0.75rem;">⚠️
+                Acknowledgment and Acceptance</h3>
+            <p style="color: #4b5563; font-size: 0.95rem; text-align: justify;">
+                By using GeoSphere, you acknowledge that you have read, understood, and agree to be bound by this
+                Disclaimer in its entirety. If you do not agree with any part of this Disclaimer, you must immediately
+                discontinue use of the Service.
+            </p>
+            <p style="color: #4b5563; font-size: 0.95rem; text-align: justify; margin-top: 0.75rem;">
+                Your use of GeoSphere constitutes your acceptance of all risks associated with such use, and you agree
+                to hold harmless Francis Nyantakyi and GeoSphere from any and all claims arising from your use of the
+                Service.
+            </p>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 2rem;">
+            <a href="index.html" class="back-home-button">
+                Back to Home
+            </a>
+        </div>
+
+    </div>
+
+<footer style="color: black; background: white; margin-top: 3rem; padding: 2rem 0; border-top: 1px solid black;">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div style="display: flex; flex-direction: row; justify-content: space-around; width: 100%;">
+
+            <div style="padding-right: 1.5rem; flex: 1 1 33.33%; border-right: 1px solid black; text-align: center;">
+                <h4 style="font-size: 1rem; font-weight: bold; margin-bottom: 0.75rem;">Contact Developer</h4>
+                <p style="font-weight: 600; margin-bottom: 0.25rem;">Francis Nyantakyi</p>
+                <p style="font-size: 0.8rem; margin-bottom: 1rem;">Admin/Developer</p>
+
+                <div style="line-height: 1.5;">
+                    <a href="mailto:nyantakyifrancis54@gmail.com"
+                        style="display: block; font-size: 0.8rem; color: blue; text-decoration: underline;">
+                        nyantakyifrancis54@gmail.com
+                    </a>
+
+                    <a href="tel:+233595715528"
+                        style="display: block; font-size: 0.8rem; color: blue; text-decoration: underline;">
+                        +233 595 715 528
+                    </a>
+
+                    <a href="https://wa.me/233595715528?text=Hello%20Francis%2C%0A%0AI%27m%20reaching%20out%20regarding%20GeoSphere.%20I%20would%20like%20to%20discuss%3A%0A%0A"
+                        target="_blank"
+                        style="display: block; font-size: 0.8rem; color: blue; text-decoration: underline;">
+                        WhatsApp Me
+                    </a>
+                </div>
+            </div>
+
+            <div
+                style="padding-left: 1.5rem; padding-right: 1.5rem; flex: 1 1 33.33%; border-right: 1px solid black; text-align: center;">
+                <h4 style="font-size: 1rem; font-weight: bold; margin-bottom: 0.75rem;">Quick Links</h4>
+                <div style="display: inline-block;">
+                    <ul style="list-style-type: disc; margin-left: 1.25rem; padding: 0; text-align: left;">
+                        <li style="margin-bottom: 0.5rem; font-size: 0.8rem;">
+                            <a href="index.html" style="color: blue; text-decoration: underline;">Home</a>
+                        </li>
+                        <li style="font-size: 0.8rem;">
+                            <a href="disclaimer.html" style="color: blue; text-decoration: underline;">
+                                Disclaimer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="padding-left: 1.5rem; flex: 1 1 33.33%; text-align: center;">
+                <h4 style="font-size: 1rem; font-weight: bold; margin-bottom: 0.75rem;">About GeoSphere</h4>
+                <p style="font-size: 0.8rem; line-height: 1.6;">
+                    Explore the world through interactive maps, real-time news, and engaging trivia.
+                    GeoSphere brings geography to life with cutting-edge APIs and a user-friendly interface.
+                </p>
+            </div>
+
+        </div>
+
+        <div style="border-top: 1px solid black; margin-top: 2rem; padding-top: 1rem; text-align: center;">
+            <p style="font-size: 0.8rem; color: #555;">
+                © 2025 GeoSphere. All rights reserved. | Developed by Francis Nyantakyi
+            </p>
+        </div>
+    </div>
+</footer>
+
+    <script type="module" src="./js/app.js"></script>
+
+</body>
+
+</html>

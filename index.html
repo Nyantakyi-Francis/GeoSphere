@@ -2,12 +2,12 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" >
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="GeoSphere - Explore local news and fun facts from around the world">
     <title>GeoSphere - Local News & Geography Trivia</title>
+    <link rel="icon" href="logo.png" type="image/png">
 
-    <!-- Mapbox -->
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
 
@@ -16,19 +16,20 @@
 
 <body class="bg-gray-100 text-gray-800">
 
-    <!-- Header -->
     <header class="p-4 bg-teal-600 text-white flex justify-between items-center">
         <h1 class="text-xl font-bold flex items-center gap-2">
             <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z">
-                <path d="M2 12h20" />
-                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                    <path d="M2 12h20">
+                        <path
+                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
             </svg>
             GeoSphere
         </h1>
         <form id="searchForm" class="flex">
             <input id="searchInput" type="text" placeholder="Search location..."
-                class="p-2 rounded-l-md border border-gray-300 text-black" autocomplete="off">
+                class="p-2 rounded-l-md border border-gray-300 text-black" autocomplete="off"
+                aria-label="Search location input">
             <button type="submit"
                 class="bg-white text-teal-600 px-4 rounded-r-md font-bold hover:bg-gray-100 transition">
                 Search
@@ -36,10 +37,8 @@
         </form>
     </header>
 
-    <!-- Main Container -->
     <div class="max-w-7xl mx-auto">
 
-        <!-- Location Label & Favorite Button -->
         <section class="p-4 flex justify-between items-center">
             <div>
                 <h2 id="locationLabel" class="text-lg font-semibold">News for your location</h2>
@@ -51,7 +50,6 @@
             </button>
         </section>
 
-        <!-- Map -->
         <section class="p-4">
             <div id="map" style="width: 100%; height: 400px;" class="rounded-lg shadow-lg border-2 border-gray-200">
             </div>
@@ -60,7 +58,6 @@
             </p>
         </section>
 
-        <!-- Favorites Section -->
         <section class="p-4">
             <div class="bg-white rounded-lg shadow p-4">
                 <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
@@ -74,7 +71,6 @@
             </div>
         </section>
 
-        <!-- Tabs -->
         <section class="p-4">
             <div class="flex gap-4 border-b-2 border-gray-200">
                 <button id="tabNews" class="tab-btn active-tab pb-2 px-4 transition">
@@ -86,14 +82,12 @@
             </div>
         </section>
 
-        <!-- News Section -->
         <section id="newsSection" class="p-4">
             <div class="mb-4">
                 <h3 class="text-lg font-bold mb-2">Latest News Articles</h3>
                 <p class="text-sm text-gray-600">Stay updated with the latest news from your selected location</p>
             </div>
             <div id="news" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- News cards will be inserted here -->
                 <div class="p-8 bg-white rounded shadow text-center">
                     <div class="animate-pulse">
                         <div class="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
@@ -104,7 +98,6 @@
             </div>
         </section>
 
-        <!-- Fun Facts/Trivia Section (hidden by default) -->
         <section id="factsSection" class="p-4 hidden">
             <div class="mb-4">
                 <h3 class="text-lg font-bold mb-2">Geography & World Trivia</h3>
@@ -134,7 +127,6 @@
             </div>
         </section>
 
-        <!-- Footer / Info Section -->
         <section class="p-4 mt-8">
             <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-teal-500">
                 <h3 class="text-lg font-bold mb-3 text-teal-700">About GeoSphere</h3>
@@ -160,42 +152,66 @@
             </div>
         </section>
 
-        <!-- Debug Info (Remove in production) -->
-        <section class="p-4">
-            <details class="bg-gray-800 text-white rounded p-3 text-xs">
-                <summary class="cursor-pointer font-bold">🔧 Debug Info (Click to expand)</summary>
-                <div id="debugInfo" class="mt-2 space-y-1">
-                    <p>LocalStorage Status: <span id="storageStatus">Checking...</span></p>
-                    <p>Favorites Count: <span id="favCount">0</span></p>
-                    <p>Last Search: <span id="lastSearchInfo">None</span></p>
-                    <p>APIs: Mapbox, WorldNews, OpenTrivia, Numbers API</p>
-                </div>
-            </details>
-        </section>
-
     </div>
 
-    <!-- App JS -->
+
+    <footer class="app-footer">
+        <div class="footer-inner-container">
+
+            <div class="footer-section footer-contact">
+                <h4 class="footer-heading">Contact Developer</h4>
+                <p class="footer-developer-name">Francis Nyantakyi</p>
+                <p class="footer-developer-title">Admin/Developer</p>
+
+                <div class="footer-links-group">
+                    <a href="mailto:nyantakyifrancis54@gmail.com" class="footer-link">
+                        nyantakyifrancis54@gmail.com
+                    </a>
+                    <a href="tel:+233595715528" class="footer-link">
+                        +233 595 715 528
+                    </a>
+                    <a href="https://wa.me/233595715528?text=Hello%20Francis%2C%0A%0AI%27m%20reaching%20out%20regarding%20GeoSphere.%20I%20would%20like%20to%20discuss%3A%0A%0A"
+                        target="_blank" class="footer-link">
+                        WhatsApp Me
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section footer-links">
+                <h4 class="footer-heading">Quick Links</h4>
+                <div class="quick-links-list-wrap">
+                    <ul class="quick-links-list">
+                        <li class="quick-links-item">
+                            <a href="index.html" class="footer-link">Home</a>
+                        </li>
+                        <li class="quick-links-item">
+                            <a href="disclaimer.html" class="footer-link">
+                                Disclaimer
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-section footer-about">
+                <h4 class="footer-heading">About GeoSphere</h4>
+                <p class="footer-about-text">
+                    Explore the world through interactive maps, real-time news, and engaging trivia.
+                    GeoSphere brings geography to life with cutting-edge APIs and a user-friendly interface.
+                </p>
+            </div>
+
+        </div>
+
+        <div class="footer-copyright">
+            <p class="footer-copyright-text">
+                © 2025 GeoSphere. All rights reserved. | Developed by Francis Nyantakyi
+            </p>
+        </div>
+    </footer>
+
+
     <script type="module" src="./js/app.js"></script>
-
-    <!-- Debug Script -->
-    <script type="module">
-        import { getFavorites, getLastSearch, getStorageInfo } from './js/modules/storage.js';
-
-        // Update debug info
-        setTimeout(() => {
-            try {
-                const storageInfo = getStorageInfo();
-                document.getElementById('storageStatus').textContent = '✓ Working';
-                document.getElementById('favCount').textContent = storageInfo.favorites;
-                const lastSearch = storageInfo.lastSearch;
-                document.getElementById('lastSearchInfo').textContent =
-                    lastSearch ? `${lastSearch.city} (${new Date(lastSearch.searchedAt).toLocaleString()})` : 'None';
-            } catch (e) {
-                document.getElementById('storageStatus').textContent = '✗ Error: ' + e.message;
-            }
-        }, 1000);
-    </script>
 
 </body>
 
