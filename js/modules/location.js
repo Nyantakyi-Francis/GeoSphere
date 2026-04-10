@@ -1,47 +1,60 @@
-// modules/location.js
+import { getMapboxToken, hasMapboxToken } from './runtimeConfig.js';
 
-const MAPBOX_TOKEN = 'pk.eyJ1IjoiZnJhbmNpc255YW50YWt5aSIsImEiOiJjbWc2dHNwc3gwaXVxMmtwYjA0enM1N2N0In0.qjW9AztKdyKHzL-HycqEqA'; // You need to get this from mapbox.com
+const DEFAULT_MAP_STATE = {
+    center: [0, 18],
+    zoom: 1.7
+};
 
-// Initialize Mapbox map
-export function initializeMap() {
-    mapboxgl.accessToken = MAPBOX_TOKEN;
+let currentMarker = null;
+
+export function initializeMap(savedMapState) {
+    if (typeof mapboxgl === 'undefined' || !document.getElementById('map') || !hasMapboxToken()) {
+        return null;
+    }
+
+    mapboxgl.accessToken = getMapboxToken();
+
+    const initialState = {
+        ...DEFAULT_MAP_STATE,
+        ...savedMapState
+    };
 
     const map = new mapboxgl.Map({
         container: 'map',
         style: 'mapbox://styles/mapbox/streets-v12',
-        center: [-74.006, 40.7128], // New York
-        zoom: 10
+        center: initialState.center,
+        zoom: initialState.zoom
     });
 
-    // Add navigation controls
-    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     return map;
 }
 
-// Update map center
-export function updateMap(map, lat, lng) {
+export function updateMap(map, lat, lng, zoom = 10) {
+    if (!map) {
+        return;
+    }
+
     map.flyTo({
         center: [lng, lat],
-        zoom: 10,
+        zoom,
         essential: true
     });
 
-    // Add or update marker
-    if (window.currentMarker) {
-        window.currentMarker.remove();
+    if (currentMarker) {
+        currentMarker.remove();
     }
 
-    window.currentMarker = new mapboxgl.Marker()
+    currentMarker = new mapboxgl.Marker({ color: '#0f766e' })
         .setLngLat([lng, lat])
         .addTo(map);
 }
 
-// Get user's current position
 export function getCurrentPosition() {
     return new Promise((resolve, reject) => {
         if (!navigator.geolocation) {
-            reject(new Error('Geolocation is not supported'));
+            reject(new Error('Geolocation is not supported by this browser.'));
             return;
         }
 
@@ -53,28 +66,38 @@ export function getCurrentPosition() {
     });
 }
 
-// Geocode search query to coordinates
 export async function geocodeSearch(query) {
+    if (!hasMapboxToken()) {
+        return null;
+    }
+
     try {
+        const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json`);
+        url.searchParams.set('access_token', getMapboxToken());
+        url.searchParams.set('limit', '1');
+        url.searchParams.set('language', 'en');
+
         const response = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${MAPBOX_TOKEN}&limit=1`
+            url
         );
 
-        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`Geocoding failed with status ${response.status}`);
+        }
 
-        if (!data.features || data.features.length === 0) {
+        const data = await response.json();
+        if (!Array.isArray(data.features) || data.features.length === 0) {
             return null;
         }
 
         const feature = data.features[0];
         const [lng, lat] = feature.center;
-        const city = feature.place_name || query;
 
         return {
-            city: formatLocationName(city),
-            region: feature.context?.find(c => c.id.includes('region'))?.text || '',
-            lat: lat,
-            lng: lng
+            city: formatLocationName(feature.place_name || feature.text || query),
+            region: feature.context?.find(item => item.id.includes('region'))?.text || '',
+            lat,
+            lng
         };
     } catch (error) {
         console.error('Geocoding error:', error);
@@ -82,28 +105,46 @@ export async function geocodeSearch(query) {
     }
 }
 
-// Reverse geocode coordinates to place name
 export async function reverseGeocode(lat, lng) {
+    if (!hasMapboxToken()) {
+        return 'Unknown location';
+    }
+
     try {
+        const url = new URL(`https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json`);
+        url.searchParams.set('access_token', getMapboxToken());
+        url.searchParams.set('limit', '1');
+        url.searchParams.set('language', 'en');
+
         const response = await fetch(
-            `https://api.mapbox.com/geocoding/v5/mapbox.places/${lng},${lat}.json?access_token=${MAPBOX_TOKEN}&limit=1`
+            url
         );
 
-        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`Reverse geocoding failed with status ${response.status}`);
+        }
 
-        if (!data.features || data.features.length === 0) {
-            return 'Unknown Location';
+        const data = await response.json();
+        if (!Array.isArray(data.features) || data.features.length === 0) {
+            return 'Unknown location';
         }
 
         return formatLocationName(data.features[0].place_name);
     } catch (error) {
         console.error('Reverse geocoding error:', error);
-        return 'Unknown Location';
+        return 'Unknown location';
     }
 }
 
-// Format location name (your existing function)
 export function formatLocationName(placeName) {
-    if (!placeName) return "Unknown Location";
-    return placeName;
+    if (!placeName) {
+        return 'Unknown location';
+    }
+
+    return placeName
+        .split(',')
+        .map(part => part.trim())
+        .filter(Boolean)
+        .slice(0, 3)
+        .join(', ');
 }

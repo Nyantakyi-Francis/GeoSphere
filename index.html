@@ -4,9 +4,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="GeoSphere - Explore local news and fun facts from around the world">
-    <title>GeoSphere - Local News & Geography Trivia</title>
+    <meta name="description"
+        content="GeoSphere is a front-end geography explorer that combines interactive mapping, local news discovery, and world trivia in one polished experience.">
+    <meta property="og:title" content="GeoSphere">
+    <meta property="og:description"
+        content="Explore a place through maps, headlines, and trivia in a portfolio-ready front-end project.">
+    <title>GeoSphere | Local Discovery Through Maps, News, and Trivia</title>
     <link rel="icon" href="logo.png" type="image/png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
 
     <link href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css" rel="stylesheet">
     <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
@@ -14,205 +24,180 @@
     <link rel="stylesheet" href="main.css">
 </head>
 
-<body class="bg-gray-100 text-gray-800">
-
-    <header class="p-4 bg-teal-600 text-white flex justify-between items-center">
-        <h1 class="text-xl font-bold flex items-center gap-2">
-            <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z">
-                    <path d="M2 12h20">
-                        <path
-                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-            </svg>
-            GeoSphere
-        </h1>
-        <form id="searchForm" class="flex">
-            <input id="searchInput" type="text" placeholder="Search location..."
-                class="p-2 rounded-l-md border border-gray-300 text-black" autocomplete="off"
-                aria-label="Search location input">
-            <button type="submit"
-                class="bg-white text-teal-600 px-4 rounded-r-md font-bold hover:bg-gray-100 transition">
-                Search
-            </button>
-        </form>
-    </header>
-
-    <div class="max-w-7xl mx-auto">
-
-        <section class="p-4 flex justify-between items-center">
-            <div>
-                <h2 id="locationLabel" class="text-lg font-semibold">News for your location</h2>
-                <p class="text-sm text-gray-500 mt-1">Search for any city to explore local news and trivia</p>
-            </div>
-            <button id="addFavoriteBtn"
-                class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700 transition transform hover:scale-105">
-                ⭐ Add to Favorites
-            </button>
-        </section>
-
-        <section class="p-4">
-            <div id="map" style="width: 100%; height: 400px;" class="rounded-lg shadow-lg border-2 border-gray-200">
-            </div>
-            <p class="text-xs text-gray-500 mt-2 text-center">
-                📍 Click and drag to explore • Scroll to zoom
-            </p>
-        </section>
-
-        <section class="p-4">
-            <div class="bg-white rounded-lg shadow p-4">
-                <h3 class="text-lg font-bold mb-3 flex items-center gap-2">
-                    <span>⭐</span>
-                    <span>Favorite Locations</span>
-                </h3>
-                <div id="favoritesList" class="mb-2"></div>
-                <p class="text-xs text-gray-500 mt-2">
-                    💡 Tip: Click on any favorite to quickly load its news and trivia
-                </p>
-            </div>
-        </section>
-
-        <section class="p-4">
-            <div class="flex gap-4 border-b-2 border-gray-200">
-                <button id="tabNews" class="tab-btn active-tab pb-2 px-4 transition">
-                    📰 Local News
-                </button>
-                <button id="tabFacts" class="tab-btn pb-2 px-4 transition">
-                    🎲 Fun Trivia
-                </button>
-            </div>
-        </section>
-
-        <section id="newsSection" class="p-4">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold mb-2">Latest News Articles</h3>
-                <p class="text-sm text-gray-600">Stay updated with the latest news from your selected location</p>
-            </div>
-            <div id="news" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="p-8 bg-white rounded shadow text-center">
-                    <div class="animate-pulse">
-                        <div class="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2"></div>
-                        <div class="h-4 bg-gray-200 rounded w-1/2 mx-auto"></div>
-                    </div>
-                    <p class="text-gray-500 mt-4">Loading news...</p>
+<body class="site-body">
+    <div class="page-shell">
+        <header class="site-header">
+            <div class="brand">
+                <div class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                        <circle cx="12" cy="12" r="9"></circle>
+                        <path d="M3 12h18"></path>
+                        <path d="M12 3a15 15 0 0 1 0 18"></path>
+                        <path d="M12 3a15 15 0 0 0 0 18"></path>
+                    </svg>
+                </div>
+                <div>
+                    <a href="index.html" class="brand-name">GeoSphere</a>
+                    <p class="brand-tagline">Atlas-style discovery for curious users, students, and travelers.</p>
                 </div>
             </div>
-        </section>
 
-        <section id="factsSection" class="p-4 hidden">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold mb-2">Geography & World Trivia</h3>
-                <p class="text-sm text-gray-600">Test your knowledge with interesting trivia questions!</p>
-            </div>
+            <form id="searchForm" class="search-bar">
+                <label class="sr-only" for="searchInput">Search for a location</label>
+                <input id="searchInput" type="text" placeholder="Search for a city, country, or landmark"
+                    autocomplete="off">
+                <button type="submit" class="button button-primary">Explore</button>
+            </form>
+        </header>
 
-            <div id="fact" class="mb-4 p-4 bg-white rounded shadow">
-                <p class="text-gray-500 text-center">Click the button below to get a fun trivia question!</p>
-            </div>
-
-            <div class="flex gap-3">
-                <button id="factBtn"
-                    class="bg-teal-600 text-white px-6 py-3 rounded font-semibold hover:bg-teal-700 transition transform hover:scale-105">
-                    🎲 Get New Trivia Question
-                </button>
-                <button id="geographyTriviaBtn"
-                    class="bg-blue-600 text-white px-6 py-3 rounded font-semibold hover:bg-blue-700 transition transform hover:scale-105">
-                    🌍 Geography Trivia
-                </button>
-            </div>
-
-            <div class="mt-4 p-3 bg-blue-50 rounded border border-blue-200">
-                <p class="text-sm text-blue-800">
-                    💡 <strong>How to play:</strong> Read the question and click on one of the answer options.
-                    You'll see if you got it right immediately!
-                </p>
-            </div>
-        </section>
-
-        <section class="p-4 mt-8">
-            <div class="bg-white rounded-lg shadow-lg p-6 border-2 border-teal-500">
-                <h3 class="text-lg font-bold mb-3 text-teal-700">About GeoSphere</h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                    <div>
-                        <p class="font-semibold mb-1 text-gray-800">🗺️ Interactive Maps</p>
-                        <p class="text-gray-600">Explore locations worldwide with Mapbox</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold mb-1 text-gray-800">📰 Real-Time News</p>
-                        <p class="text-gray-600">Stay informed with WorldNewsAPI</p>
-                    </div>
-                    <div>
-                        <p class="font-semibold mb-1 text-gray-800">🎓 Educational Trivia</p>
-                        <p class="text-gray-600">Learn with OpenTriviaDB questions</p>
+        <main class="page-content">
+            <section class="panel hero">
+                <div>
+                    <p class="eyebrow">Portfolio Project</p>
+                    <h1>Explore a place through mapping, headlines, and trivia.</h1>
+                    <p class="hero-text">
+                        GeoSphere combines geospatial search, live news retrieval, and playful learning in one front-end
+                        experience. It is designed to show product thinking, API integration, and polished UI work in a
+                        single project.
+                    </p>
+                    <div class="hero-actions">
+                        <button id="addFavoriteBtn" type="button" class="button button-primary">Save current place</button>
+                        <a href="#newsSection" class="button button-secondary">View latest stories</a>
                     </div>
                 </div>
-                <div class="mt-4 pt-4 border-t border-gray-200">
-                    <p class="text-xs text-gray-600">
-                        💾 Your preferences and favorites are saved locally and persist across sessions
+
+                <div class="hero-meta">
+                    <article class="stat-card">
+                        <p class="stat-value">3</p>
+                        <p class="stat-label">Experience layers</p>
+                        <p class="stat-detail">Map search, live headlines, and trivia work together instead of feeling like separate demos.</p>
+                    </article>
+                    <article class="stat-card">
+                        <p class="stat-value">Local</p>
+                        <p class="stat-label">Browser memory</p>
+                        <p class="stat-detail">Favorites, search history, and session state persist without needing an account.</p>
+                    </article>
+                    <article class="stat-card">
+                        <p class="stat-value">Resilient</p>
+                        <p class="stat-label">Fallback behavior</p>
+                        <p class="stat-detail">The interface still tells a clear story when a third-party service slows down or fails.</p>
+                    </article>
+                </div>
+            </section>
+
+            <div id="appMessage" class="status-banner hidden" role="status" aria-live="polite"></div>
+
+            <section class="workspace-grid">
+                <div class="panel map-panel">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Discovery Mode</p>
+                            <h2 id="locationLabel">Exploring your location</h2>
+                            <p>Search for any city or let GeoSphere start nearby, then move between stories and trivia without losing context.</p>
+                        </div>
+                        <div class="map-legend">
+                            <span class="legend-pill">Drag to explore</span>
+                            <span class="legend-pill">Scroll to zoom</span>
+                        </div>
+                    </div>
+                    <div id="map" class="map-frame" aria-label="Interactive map"></div>
+                </div>
+
+                <aside class="sidebar">
+                    <section class="panel side-panel">
+                        <div class="section-heading compact">
+                            <div>
+                                <p class="eyebrow">Saved Places</p>
+                                <h3>Favorites</h3>
+                            </div>
+                            <p class="panel-note">Keep a shortlist of places worth revisiting during your demo.</p>
+                        </div>
+                        <div id="favoritesList" class="favorites-list"></div>
+                    </section>
+
+                    <section class="panel side-panel">
+                        <div class="section-heading compact">
+                            <div>
+                                <p class="eyebrow">Session Memory</p>
+                                <h3>Recent searches</h3>
+                            </div>
+                            <p class="panel-note">A local-only history makes the product feel more complete and useful.</p>
+                        </div>
+                        <div id="searchHistoryList" class="history-list"></div>
+                    </section>
+                </aside>
+            </section>
+
+            <section class="panel content-panel">
+                <div class="tabs" role="tablist" aria-label="Content sections">
+                    <button id="tabNews" class="tab-btn active-tab" type="button" aria-pressed="true">Local news</button>
+                    <button id="tabFacts" class="tab-btn" type="button" aria-pressed="false">Trivia lab</button>
+                </div>
+
+                <section id="newsSection" class="content-section">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Editorial Feed</p>
+                            <h3>Latest coverage</h3>
+                            <p>Headlines that mention your selected place, rendered as quick-scan cards instead of a raw API dump.</p>
+                        </div>
+                    </div>
+                    <div id="news" class="news-grid" aria-live="polite"></div>
+                </section>
+
+                <section id="factsSection" class="content-section hidden">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Interactive Learning</p>
+                            <h3>Trivia lab</h3>
+                            <p>Switch between general and geography-only questions to keep the educational angle sharp.</p>
+                        </div>
+                        <div class="trivia-actions">
+                            <button id="factBtn" type="button" class="button button-primary button-small">New question</button>
+                            <button id="geographyTriviaBtn" type="button" class="button button-accent button-small">Geography only</button>
+                        </div>
+                    </div>
+                    <div id="fact" class="trivia-shell" aria-live="polite"></div>
+                </section>
+            </section>
+
+            <section class="project-grid">
+                <article class="panel insight-card">
+                    <p class="eyebrow">Product Thinking</p>
+                    <h3>One journey, not three widgets</h3>
+                    <p>GeoSphere is stronger than a typical API exercise because each feature supports the same user goal: understand a place quickly and enjoyably.</p>
+                </article>
+                <article class="panel insight-card">
+                    <p class="eyebrow">Architecture</p>
+                    <h3>Modular vanilla JavaScript</h3>
+                    <p>Geolocation, persistence, rendering, news, and trivia are separated into focused modules so the app stays readable and easier to extend.</p>
+                </article>
+                <article class="panel insight-card">
+                    <p class="eyebrow">Portfolio Signal</p>
+                    <h3>Polish over raw feature count</h3>
+                    <p>Recent searches, loading states, empty states, and session restore make the project feel intentional instead of like a one-off prototype.</p>
+                </article>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="panel footer-panel">
+                <div>
+                    <p class="eyebrow">Built by Francis Nyantakyi</p>
+                    <p class="small-copy">
+                        GeoSphere is a portfolio project focused on geospatial discovery, API orchestration, and local-first state management.
                     </p>
                 </div>
+                <div class="footer-links">
+                    <a href="index.html">Experience</a>
+                    <a href="disclaimer.html">Disclaimer</a>
+                    <a href="mailto:nyantakyifrancis54@gmail.com">Email</a>
+                </div>
             </div>
-        </section>
-
+        </footer>
     </div>
 
-
-    <footer class="app-footer">
-        <div class="footer-inner-container">
-
-            <div class="footer-section footer-contact">
-                <h4 class="footer-heading">Contact Developer</h4>
-                <p class="footer-developer-name">Francis Nyantakyi</p>
-                <p class="footer-developer-title">Admin/Developer</p>
-
-                <div class="footer-links-group">
-                    <a href="mailto:nyantakyifrancis54@gmail.com" class="footer-link">
-                        nyantakyifrancis54@gmail.com
-                    </a>
-                    <a href="tel:+233595715528" class="footer-link">
-                        +233 595 715 528
-                    </a>
-                    <a href="https://wa.me/233595715528?text=Hello%20Francis%2C%0A%0AI%27m%20reaching%20out%20regarding%20GeoSphere.%20I%20would%20like%20to%20discuss%3A%0A%0A"
-                        target="_blank" class="footer-link">
-                        WhatsApp Me
-                    </a>
-                </div>
-            </div>
-
-            <div class="footer-section footer-links">
-                <h4 class="footer-heading">Quick Links</h4>
-                <div class="quick-links-list-wrap">
-                    <ul class="quick-links-list">
-                        <li class="quick-links-item">
-                            <a href="index.html" class="footer-link">Home</a>
-                        </li>
-                        <li class="quick-links-item">
-                            <a href="disclaimer.html" class="footer-link">
-                                Disclaimer
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="footer-section footer-about">
-                <h4 class="footer-heading">About GeoSphere</h4>
-                <p class="footer-about-text">
-                    Explore the world through interactive maps, real-time news, and engaging trivia.
-                    GeoSphere brings geography to life with cutting-edge APIs and a user-friendly interface.
-                </p>
-            </div>
-
-        </div>
-
-        <div class="footer-copyright">
-            <p class="footer-copyright-text">
-                © 2025 GeoSphere. All rights reserved. | Developed by Francis Nyantakyi
-            </p>
-        </div>
-    </footer>
-
-
     <script type="module" src="./js/app.js"></script>
-
 </body>
 
 </html>

@@ -1,11 +1,4 @@
-// js/modules/newsService.js
-
-/**
- * GeoSphere News Service Module - WorldNewsAPI.com Integration
- */
-
-const WORLD_NEWS_API_KEY = 'd9366004485645fa8780d40bda10f0db';
-const WORLD_NEWS_BASE_URL = 'https://api.worldnewsapi.com/search-news';
+const NEWS_API_PROXY_URL = '/api/news';
 
 const FILTER_MAP = {
     general: 'general',
@@ -15,73 +8,118 @@ const FILTER_MAP = {
     health: 'health'
 };
 
-// Fallback news data
 const FALLBACK_NEWS = [
     {
-        title: "Local Community Events Bring Residents Together",
-        description: "Community gatherings and festivals celebrate local culture and traditions across the region.",
-        url: "#",
-        imageUrl: "https://picsum.photos/400/200?random=1",
-        author: "Local News",
-        source: "Community Herald"
+        title: 'Design snapshot: how city discovery apps build trust',
+        description: 'A strong local explorer balances speed, clarity, and context so users know what they are looking at right away.',
+        author: 'GeoSphere Demo Feed',
+        source: 'Portfolio Preview'
     },
     {
-        title: "Urban Development Projects Enhance City Living",
-        description: "New green spaces and infrastructure improvements planned for metropolitan areas.",
-        url: "#",
-        imageUrl: "https://picsum.photos/400/200?random=2",
-        author: "Urban Planning",
-        source: "City Times"
+        title: 'Product idea: make saved places feel like a travel notebook',
+        description: 'Favorites, recent searches, and session memory turn a simple map search into an experience that feels personal and reusable.',
+        author: 'GeoSphere Demo Feed',
+        source: 'Portfolio Preview'
+    },
+    {
+        title: 'Frontend note: resilient UI beats a blank screen',
+        description: 'Thoughtful empty states and fallback content show product maturity even when a third-party API is unavailable.',
+        author: 'GeoSphere Demo Feed',
+        source: 'Portfolio Preview'
     }
 ];
 
 export async function fetchNews(city, filter) {
-    if (!city) return getFallbackNews('your location');
+    if (!city) {
+        return getFallbackNews('this location');
+    }
 
     try {
-        const category = FILTER_MAP[filter] || 'general';
-        const query = city;
-
-        // WorldNewsAPI.com call
-        const url = `${WORLD_NEWS_BASE_URL}?api-key=${WORLD_NEWS_API_KEY}&text=${encodeURIComponent(query)}&source-countries=us,gb&language=en&number=10`;
-
-        console.log(`Fetching WorldNewsAPI for: ${query} (${category})`);
+        const url = new URL(NEWS_API_PROXY_URL, window.location.origin);
+        url.searchParams.set('city', city);
+        url.searchParams.set('filter', filter || FILTER_MAP.general);
 
         const response = await fetch(url);
-
         if (!response.ok) {
-            throw new Error(`WorldNewsAPI error: ${response.status}`);
+            throw new Error(`News proxy returned ${response.status}`);
         }
 
         const data = await response.json();
+        const articles = Array.isArray(data.news)
+            ? data.news.map((article, index) => mapArticle(article, index)).filter(Boolean)
+            : [];
 
-        if (!data.news || data.news.length === 0) {
-            console.log('No WorldNewsAPI articles found, using fallback');
-            return getFallbackNews(city);
-        }
-
-        // Map WorldNewsAPI response to our app's format
-        return data.news.map(article => ({
-            source: article.source?.name || 'Unknown Source',
-            author: article.author || 'Unknown Author',
-            title: article.title,
-            description: article.text?.substring(0, 150) + '...' || 'No description available',
-            url: article.url,
-            imageUrl: article.image || `https://picsum.photos/400/200?random=${Math.floor(Math.random() * 10)}`
-        }));
-
+        return articles.length > 0 ? articles : getFallbackNews(city);
     } catch (error) {
-        console.error('WorldNewsAPI fetch failed, using fallback:', error);
+        console.error('News loading failed:', error);
         return getFallbackNews(city);
     }
 }
 
-// Fallback news generator
+function mapArticle(article, index) {
+    if (!article?.title) {
+        return null;
+    }
+
+    return {
+        title: article.title.trim(),
+        description: summarizeText(article.text || article.summary || article.snippet),
+        url: sanitizeUrl(article.url),
+        imageUrl: sanitizeUrl(article.image) || getFallbackImage(index),
+        author: article.author || '',
+        source: getSourceLabel(article.source),
+        publishedAt: article.publish_date || article.publishedAt || null
+    };
+}
+
 function getFallbackNews(city) {
     return FALLBACK_NEWS.map((article, index) => ({
         ...article,
-        title: article.title.replace('Local', city || 'Local'),
-        description: article.description,
-        imageUrl: `https://picsum.photos/400/200?random=${index + 1}`
+        title: article.title.replace('city', city),
+        imageUrl: getFallbackImage(index),
+        url: '',
+        publishedAt: null
     }));
+}
+
+function summarizeText(text) {
+    const cleanText = (text || '').replace(/\s+/g, ' ').trim();
+    if (!cleanText) {
+        return 'No summary was available for this story, so GeoSphere switched to a compact preview.';
+    }
+
+    if (cleanText.length <= 170) {
+        return cleanText;
+    }
+
+    return `${cleanText.slice(0, 167).trim()}...`;
+}
+
+function getSourceLabel(source) {
+    if (!source) {
+        return 'World news feed';
+    }
+
+    if (typeof source === 'string') {
+        return source;
+    }
+
+    return source.name || source.title || 'World news feed';
+}
+
+function getFallbackImage(index) {
+    return `https://picsum.photos/seed/geosphere-${index + 1}/900/560`;
+}
+
+function sanitizeUrl(url) {
+    if (!url) {
+        return '';
+    }
+
+    try {
+        const parsedUrl = new URL(url);
+        return ['http:', 'https:'].includes(parsedUrl.protocol) ? parsedUrl.toString() : '';
+    } catch {
+        return '';
+    }
 }

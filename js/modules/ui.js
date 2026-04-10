@@ -1,367 +1,413 @@
-// js/modules/ui.js
+let appMessageTimerId = 0;
 
-/**
- * GeoSphere UI Module
- * Handles all DOM rendering and UI updates
- */
-
-// ============================================
-// NEWS RENDERING
-// ============================================
-
-/**
- * Render news cards with animations
- * @param {Array} articles - Array of news articles
- */
-export function renderNewsCards(articles) {
+export function renderNewsLoading() {
     const container = document.getElementById('news');
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    if (!articles || articles.length === 0) {
-        container.innerHTML = `
-            <div class="p-4 bg-white rounded shadow text-center">
-                <p class="text-gray-500">No news available for this location.</p>
-                <p class="text-gray-400 text-sm mt-2">Try searching for a different city.</p>
-            </div>
-        `;
+    if (!container) {
         return;
     }
 
-    articles.forEach((article, index) => {
-        const card = document.createElement('div');
-        card.className = 'news-card news-card-squared';
-        card.style.animationDelay = `${index * 0.1}s`;
-
-        card.innerHTML = `
-            ${article.imageUrl ? `
-                <img src="${article.imageUrl}" 
-                     alt="${escapeHtml(article.title)}" 
-                     class="w-full h-64 object-contain bg-gray-50 mb-2 rounded"
-                     onerror="this.src='https://picsum.photos/400/400?random=${index}'"
-                />
-            ` : ''}
-            <div class="p-3">
-                <h3 class="text-lg font-bold mb-2">${escapeHtml(article.title)}</h3>
-                ${article.source ? `
-                    <p class="text-gray-500 text-sm mb-2">
-                        ${escapeHtml(article.source)}
-                        ${article.author ? ` • ${escapeHtml(article.author)}` : ''}
-                    </p>
-                ` : ''}
-                <p class="text-gray-700 mb-3 line-clamp-3">${escapeHtml(article.description || 'No description available')}</p>
-                <a href="${escapeHtml(article.url)}" 
-                   target="_blank" 
-                   rel="noopener noreferrer"
-                   class="text-blue-600 hover:underline font-semibold">
-                    Read more →
-                </a>
+    container.innerHTML = Array.from({ length: 2 }, () => `
+        <article class="news-card loading-card" aria-hidden="true">
+            <div class="loading-block loading-media"></div>
+            <div class="news-card-body">
+                <div class="loading-line short"></div>
+                <div class="loading-line"></div>
+                <div class="loading-line"></div>
+                <div class="loading-line tiny"></div>
             </div>
-        `;
-
-        container.appendChild(card);
-    });
-
-    console.log(`Rendered ${articles.length} news articles`);
+        </article>
+    `).join('');
 }
 
-// ============================================
-// TRIVIA RENDERING
-// ============================================
-
-/**
- * Render trivia question with multiple choice answers
- * @param {Object} triviaData - Trivia data object
- */
-export function renderTrivia(triviaData) {
-    const container = document.getElementById('fact');
-    if (!container) return;
-
-    if (!triviaData) {
-        container.innerHTML = '<p class="text-gray-500">No trivia available. Click the button to get a new question!</p>';
+export function renderNewsCards(articles, city) {
+    const container = document.getElementById('news');
+    if (!container) {
         return;
     }
 
-    // If it's a simple fact (no multiple choice)
-    if (triviaData.type === 'fact' || !triviaData.allAnswers) {
+    if (!Array.isArray(articles) || articles.length === 0) {
         container.innerHTML = `
-            <div class="bg-white rounded shadow p-4">
-                <h3 class="font-bold text-lg mb-2 text-teal-600">${escapeHtml(triviaData.question)}</h3>
-                <p class="text-gray-700 mb-3">${escapeHtml(triviaData.answer)}</p>
-                ${triviaData.source ? `
-                    <p class="text-gray-400 text-sm">Source: ${escapeHtml(triviaData.source)}</p>
-                ` : ''}
+            <div class="content-placeholder">
+                <strong>No stories were available.</strong>
+                <p>Try another place name or come back later for fresh results for ${escapeHtml(city || 'this location')}.</p>
             </div>
         `;
         return;
     }
 
-    // Render multiple choice trivia question
+    container.innerHTML = articles.map(article => {
+        const articleUrl = sanitizeUrl(article.url);
+        const imageUrl = sanitizeUrl(article.imageUrl);
+        const publishedLabel = formatArticleDate(article.publishedAt);
+
+        return `
+            <article class="news-card">
+                ${imageUrl
+                    ? `
+                        <div class="news-card-media">
+                            <img src="${imageUrl}" alt="${escapeHtml(article.title)}" loading="lazy">
+                        </div>
+                    `
+                    : `
+                        <div class="news-card-media news-card-media-placeholder">
+                            <span>No preview available</span>
+                        </div>
+                    `}
+                <div class="news-card-body">
+                    <div class="news-card-meta">
+                        <span class="pill">${escapeHtml(article.source || 'News feed')}</span>
+                        ${article.author ? `<span class="pill pill-muted">${escapeHtml(article.author)}</span>` : ''}
+                    </div>
+                    <h3>${escapeHtml(article.title)}</h3>
+                    <p>${escapeHtml(article.description || 'No summary available.')}</p>
+                    <div class="news-card-footer">
+                        ${articleUrl
+                            ? `
+                                <a href="${articleUrl}" target="_blank" rel="noopener noreferrer" class="link-arrow">
+                                    Open article
+                                </a>
+                            `
+                            : '<span class="link-muted">Preview only</span>'}
+                        ${publishedLabel ? `<span class="article-date">${escapeHtml(publishedLabel)}</span>` : ''}
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join('');
+}
+
+export function renderTriviaLoading(message = 'Loading trivia...') {
+    const container = document.getElementById('fact');
+    if (!container) {
+        return;
+    }
+
     container.innerHTML = `
-        <div class="bg-white rounded shadow p-4">
-            <div class="mb-4">
-                ${triviaData.category ? `
-                    <span class="bg-teal-100 text-teal-800 text-xs font-semibold px-2 py-1 rounded">
-                        ${escapeHtml(triviaData.category)}
-                    </span>
-                ` : ''}
-                ${triviaData.difficulty ? `
-                    <span class="bg-gray-100 text-gray-800 text-xs font-semibold px-2 py-1 rounded ml-2">
-                        ${escapeHtml(triviaData.difficulty)}
-                    </span>
-                ` : ''}
+        <article class="trivia-card">
+            <p class="eyebrow">Trivia Lab</p>
+            <p class="trivia-question">${escapeHtml(message)}</p>
+            <div class="loading-stack" aria-hidden="true">
+                <div class="loading-line"></div>
+                <div class="loading-line"></div>
+                <div class="loading-line short"></div>
             </div>
-            
-            <h3 class="font-bold text-lg mb-4 text-gray-800">${escapeHtml(triviaData.question)}</h3>
-            
-            <div id="triviaAnswers" class="space-y-2 mb-4">
+        </article>
+    `;
+}
+
+export function renderTrivia(triviaData) {
+    const container = document.getElementById('fact');
+    if (!container) {
+        return;
+    }
+
+    if (!triviaData) {
+        container.innerHTML = `
+            <div class="content-placeholder">
+                <strong>No trivia available yet.</strong>
+                <p>Use the buttons above to request a new question.</p>
+            </div>
+        `;
+        return;
+    }
+
+    if (triviaData.type === 'fact' || !Array.isArray(triviaData.allAnswers)) {
+        container.innerHTML = `
+            <article class="trivia-card">
+                <p class="eyebrow">Quick Fact</p>
+                <h3 class="trivia-question">${escapeHtml(triviaData.question)}</h3>
+                <p class="trivia-copy">${escapeHtml(triviaData.answer)}</p>
+                ${triviaData.source ? `<p class="trivia-source">Source: ${escapeHtml(triviaData.source)}</p>` : ''}
+            </article>
+        `;
+        return;
+    }
+
+    container.innerHTML = `
+        <article class="trivia-card">
+            <div class="trivia-badges">
+                ${triviaData.category ? `<span class="pill">${escapeHtml(triviaData.category)}</span>` : ''}
+                ${triviaData.difficulty ? `<span class="pill pill-muted">${escapeHtml(triviaData.difficulty)}</span>` : ''}
+            </div>
+            <h3 class="trivia-question">${escapeHtml(triviaData.question)}</h3>
+            <div class="trivia-answers">
                 ${triviaData.allAnswers.map((answer, index) => `
-                    <button class="answer-btn w-full" data-answer="${escapeHtml(answer)}">
-                        ${String.fromCharCode(65 + index)}. ${escapeHtml(answer)}
+                    <button type="button" class="answer-btn" data-answer="${escapeHtml(answer)}">
+                        <span class="answer-label">${String.fromCharCode(65 + index)}</span>
+                        <span>${escapeHtml(answer)}</span>
                     </button>
                 `).join('')}
             </div>
-            
-            <div id="triviaResult" class="hidden mt-4 p-3 rounded"></div>
-            
-            ${triviaData.source ? `
-                <p class="text-gray-400 text-sm mt-3">Source: ${escapeHtml(triviaData.source)}</p>
-            ` : ''}
-        </div>
+            <div class="trivia-result hidden"></div>
+            ${triviaData.source ? `<p class="trivia-source">Source: ${escapeHtml(triviaData.source)}</p>` : ''}
+        </article>
     `;
 
-    // Add event listeners to answer buttons
-    const answerButtons = container.querySelectorAll('.answer-btn');
-    answerButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            handleTriviaAnswer(e.target, triviaData);
+    container.querySelectorAll('.answer-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            handleTriviaAnswer(button, triviaData, container);
         });
     });
-
-    console.log('Rendered trivia question:', triviaData.question);
 }
 
-/**
- * Handle trivia answer selection
- * @param {HTMLElement} button - Clicked button
- * @param {Object} triviaData - Trivia data
- */
-function handleTriviaAnswer(button, triviaData) {
-    const userAnswer = button.dataset.answer;
+function handleTriviaAnswer(clickedButton, triviaData, scope) {
+    const userAnswer = clickedButton.dataset.answer;
     const isCorrect = userAnswer === triviaData.answer;
-    const resultDiv = document.getElementById('triviaResult');
-    const allButtons = document.querySelectorAll('.answer-btn');
+    const answerButtons = scope.querySelectorAll('.answer-btn');
+    const resultPanel = scope.querySelector('.trivia-result');
 
-    // Disable all buttons
-    allButtons.forEach(btn => {
-        btn.disabled = true;
+    answerButtons.forEach(button => {
+        button.disabled = true;
 
-        // Highlight correct and incorrect answers
-        if (btn.dataset.answer === triviaData.answer) {
-            btn.classList.add('correct');
-        } else if (btn.dataset.answer === userAnswer && !isCorrect) {
-            btn.classList.add('incorrect');
+        if (button.dataset.answer === triviaData.answer) {
+            button.classList.add('correct');
+        } else if (button.dataset.answer === userAnswer) {
+            button.classList.add('incorrect');
         }
     });
 
-    // Show result
-    if (resultDiv) {
-        resultDiv.classList.remove('hidden');
-        if (isCorrect) {
-            resultDiv.className = 'mt-4 p-3 rounded bg-green-100 text-green-800';
-            resultDiv.innerHTML = `
-                <p class="font-bold">✓ Correct!</p>
-                <p class="text-sm">Great job! You got it right.</p>
-            `;
-        } else {
-            resultDiv.className = 'mt-4 p-3 rounded bg-red-100 text-red-800';
-            resultDiv.innerHTML = `
-                <p class="font-bold">✗ Incorrect</p>
-                <p class="text-sm">The correct answer is: <strong>${escapeHtml(triviaData.answer)}</strong></p>
-            `;
-        }
+    if (!resultPanel) {
+        return;
     }
 
-    console.log(`User answered: ${userAnswer}, Correct: ${isCorrect}`);
+    resultPanel.classList.remove('hidden');
+    resultPanel.classList.add(isCorrect ? 'correct' : 'incorrect');
+    resultPanel.innerHTML = isCorrect
+        ? `
+            <strong>Correct.</strong>
+            <p>Nice work. GeoSphere marked the right answer immediately so the feedback feels fast.</p>
+        `
+        : `
+            <strong>Not quite.</strong>
+            <p>The correct answer was ${escapeHtml(triviaData.answer)}.</p>
+        `;
 }
 
-// ============================================
-// FAVORITES RENDERING
-// ============================================
-
-/**
- * Render favorites list
- * @param {Array} favorites - Array of favorite locations
- */
 export function renderFavorites(favorites) {
     const container = document.getElementById('favoritesList');
-
-    // If container doesn't exist, just log it
     if (!container) {
-        console.log(`Loaded ${favorites.length} favorites (no UI container found)`);
         return;
     }
 
-    container.innerHTML = '';
-
-    if (!favorites || favorites.length === 0) {
+    if (!Array.isArray(favorites) || favorites.length === 0) {
         container.innerHTML = `
-            <div class="p-4 bg-gray-50 rounded text-center">
-                <p class="text-gray-500">No favorites yet</p>
-                <p class="text-gray-400 text-sm mt-1">Add locations to quickly access them later!</p>
+            <div class="empty-state">
+                Save a place to create your own shortlist of cities to revisit, compare, and show off in your portfolio demo.
             </div>
         `;
         return;
     }
 
-    favorites.forEach((fav, index) => {
-        const favCard = document.createElement('div');
-        favCard.className = 'p-3 bg-white rounded shadow mb-2 cursor-pointer hover:bg-gray-100 transition';
-        favCard.style.animationDelay = `${index * 0.05}s`;
-
-        favCard.innerHTML = `
-            <div class="flex justify-between items-center">
-                <div>
-                    <p class="font-semibold text-gray-800">${escapeHtml(fav.city)}</p>
-                    ${fav.region ? `<p class="text-sm text-gray-500">${escapeHtml(fav.region)}</p>` : ''}
-                    ${fav.addedAt ? `
-                        <p class="text-xs text-gray-400 mt-1">
-                            Added: ${formatDate(fav.addedAt)}
-                        </p>
-                    ` : ''}
-                </div>
-                <button class="remove-fav-btn text-red-500 hover:text-red-700 font-bold" 
-                        data-lat="${fav.lat}" 
-                        data-lng="${fav.lng}">
-                    ✕
+    container.innerHTML = favorites.map((favorite, index) => `
+        <article class="favorite-card">
+            <div class="favorite-card-head">
+                <button type="button" class="favorite-select-btn" data-index="${index}">
+                    <span class="favorite-city">${escapeHtml(favorite.city)}</span>
+                    ${favorite.region ? `<span class="favorite-region">${escapeHtml(favorite.region)}</span>` : ''}
+                    ${favorite.addedAt ? `<span class="favorite-time">Saved ${escapeHtml(formatRelativeDate(favorite.addedAt))}</span>` : ''}
+                </button>
+                <button
+                    type="button"
+                    class="favorite-remove-btn"
+                    data-index="${index}"
+                    aria-label="Remove ${escapeHtml(favorite.city)} from favorites"
+                >
+                    X
                 </button>
             </div>
-        `;
+        </article>
+    `).join('');
 
-        // Click to select favorite
-        favCard.addEventListener('click', (e) => {
-            // Don't trigger if clicking remove button
-            if (e.target.classList.contains('remove-fav-btn')) return;
-
-            const event = new CustomEvent('favoriteSelected', {
-                detail: fav
-            });
-            document.dispatchEvent(event);
+    container.querySelectorAll('.favorite-select-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const favorite = favorites[Number(button.dataset.index)];
+            document.dispatchEvent(new CustomEvent('favoriteSelected', {
+                detail: favorite
+            }));
         });
-
-        container.appendChild(favCard);
     });
 
-    console.log(`Rendered ${favorites.length} favorites in UI`);
+    container.querySelectorAll('.favorite-remove-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const favorite = favorites[Number(button.dataset.index)];
+            document.dispatchEvent(new CustomEvent('favoriteRemoved', {
+                detail: {
+                    city: favorite.city,
+                    lat: favorite.lat,
+                    lng: favorite.lng
+                }
+            }));
+        });
+    });
 }
 
-// ============================================
-// TAB MANAGEMENT
-// ============================================
-
-/**
- * Set active tab and show corresponding content
- * @param {string} tabName - 'news' or 'trivia'
- */
-export function setActiveTab(tabName) {
-    // Update tab buttons
-    const allTabButtons = document.querySelectorAll('.tab-btn');
-    allTabButtons.forEach(btn => {
-        btn.classList.remove('active-tab', 'border-teal-600', 'text-teal-600');
-        btn.classList.add('text-gray-500');
-    });
-
-    const activeBtn = document.getElementById(tabName === 'news' ? 'tabNews' : 'tabFacts');
-    if (activeBtn) {
-        activeBtn.classList.add('active-tab', 'border-teal-600', 'text-teal-600');
-        activeBtn.classList.remove('text-gray-500');
+export function renderSearchHistory(history) {
+    const container = document.getElementById('searchHistoryList');
+    if (!container) {
+        return;
     }
 
-    // Show/hide sections
+    if (!Array.isArray(history) || history.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                Recent searches stay local to this browser. Once you search a few cities, they will appear here for one-click access.
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = history.map((term, index) => `
+        <button type="button" class="history-chip" data-index="${index}">
+            <span class="history-city">${escapeHtml(term)}</span>
+            <span class="history-meta">Tap to reload this location</span>
+        </button>
+    `).join('');
+
+    container.querySelectorAll('.history-chip').forEach(button => {
+        button.addEventListener('click', () => {
+            const term = history[Number(button.dataset.index)];
+            document.dispatchEvent(new CustomEvent('searchHistorySelected', {
+                detail: term
+            }));
+        });
+    });
+}
+
+export function setActiveTab(tabName) {
+    const tabNews = document.getElementById('tabNews');
+    const tabFacts = document.getElementById('tabFacts');
     const newsSection = document.getElementById('newsSection');
     const factsSection = document.getElementById('factsSection');
 
-    if (newsSection) {
-        newsSection.classList.toggle('hidden', tabName !== 'news');
+    if (!tabNews || !tabFacts || !newsSection || !factsSection) {
+        return;
     }
 
-    if (factsSection) {
-        factsSection.classList.toggle('hidden', tabName !== 'trivia');
+    const showingNews = tabName === 'news';
+
+    tabNews.classList.toggle('active-tab', showingNews);
+    tabFacts.classList.toggle('active-tab', !showingNews);
+    tabNews.setAttribute('aria-pressed', String(showingNews));
+    tabFacts.setAttribute('aria-pressed', String(!showingNews));
+
+    newsSection.classList.toggle('hidden', !showingNews);
+    factsSection.classList.toggle('hidden', showingNews);
+}
+
+export function showAppMessage(message, variant = 'info', options = {}) {
+    const banner = document.getElementById('appMessage');
+    if (!banner) {
+        return;
     }
 
-    console.log(`Switched to ${tabName} tab`);
+    const duration = options.duration ?? 4500;
+
+    banner.innerHTML = `<p>${escapeHtml(message)}</p>`;
+    banner.dataset.variant = variant;
+    banner.classList.remove('hidden');
+
+    window.clearTimeout(appMessageTimerId);
+    if (duration > 0) {
+        appMessageTimerId = window.setTimeout(() => {
+            banner.classList.add('hidden');
+        }, duration);
+    }
 }
 
-// ============================================
-// UTILITY FUNCTIONS
-// ============================================
+export function clearAppMessage() {
+    const banner = document.getElementById('appMessage');
+    if (!banner) {
+        return;
+    }
 
-/**
- * Escape HTML to prevent XSS attacks
- * @param {string} text - Text to escape
- * @returns {string} Escaped text
- */
-function escapeHtml(text) {
-    if (!text) return '';
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+    window.clearTimeout(appMessageTimerId);
+    banner.classList.add('hidden');
+    banner.innerHTML = '';
 }
 
-/**
- * Format date string to readable format
- * @param {string} dateString - ISO date string
- * @returns {string} Formatted date
- */
-function formatDate(dateString) {
-    if (!dateString) return '';
+export function showError(container, message) {
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="content-placeholder content-error">
+            <strong>Something went wrong.</strong>
+            <p>${escapeHtml(message)}</p>
+        </div>
+    `;
+}
+
+export function setFavoriteButtonLabel(isSaved) {
+    const button = document.getElementById('addFavoriteBtn');
+    if (!button) {
+        return;
+    }
+
+    button.textContent = isSaved ? 'Remove from favorites' : 'Save current place';
+    button.classList.toggle('is-saved', isSaved);
+}
+
+function formatRelativeDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMinutes = Math.floor((now - date) / 60000);
+
+    if (diffInMinutes < 1) {
+        return 'just now';
+    }
+
+    if (diffInMinutes < 60) {
+        return `${diffInMinutes} min ago`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return `${diffInHours} hour${diffInHours === 1 ? '' : 's'} ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 7) {
+        return `${diffInDays} day${diffInDays === 1 ? '' : 's'} ago`;
+    }
+
+    return date.toLocaleDateString();
+}
+
+function formatArticleDate(dateString) {
+    if (!dateString) {
+        return '';
+    }
 
     try {
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffMs = now - date;
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMs / 3600000);
-        const diffDays = Math.floor(diffMs / 86400000);
-
-        if (diffMins < 1) return 'Just now';
-        if (diffMins < 60) return `${diffMins} min ago`;
-        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-        if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-
-        return date.toLocaleDateString();
-    } catch (e) {
+        return new Intl.DateTimeFormat('en', {
+            month: 'short',
+            day: 'numeric'
+        }).format(new Date(dateString));
+    } catch {
         return '';
     }
 }
 
-/**
- * Show loading spinner
- * @param {HTMLElement} container - Container element
- */
-export function showLoading(container) {
-    if (!container) return;
+function sanitizeUrl(url) {
+    if (!url) {
+        return '';
+    }
 
-    container.innerHTML = `
-        <div class="flex justify-center items-center p-8">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600"></div>
-        </div>
-    `;
+    try {
+        const parsedUrl = new URL(url);
+        return ['http:', 'https:'].includes(parsedUrl.protocol) ? parsedUrl.toString() : '';
+    } catch {
+        return '';
+    }
 }
 
-/**
- * Show error message
- * @param {HTMLElement} container - Container element
- * @param {string} message - Error message
- */
-export function showError(container, message) {
-    if (!container) return;
+function escapeHtml(value) {
+    if (!value) {
+        return '';
+    }
 
-    container.innerHTML = `
-        <div class="p-4 bg-red-50 border border-red-200 rounded">
-            <p class="text-red-800 font-semibold">Error</p>
-            <p class="text-red-600 text-sm">${escapeHtml(message)}</p>
-        </div>
-    `;
+    const div = document.createElement('div');
+    div.textContent = value;
+    return div.innerHTML;
 }
