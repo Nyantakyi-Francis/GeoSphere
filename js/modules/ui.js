@@ -192,7 +192,7 @@ export function renderFavorites(favorites) {
     if (!Array.isArray(favorites) || favorites.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                Save a place to create your own shortlist of cities to revisit, compare, and show off in your portfolio demo.
+                Save a place to build your own shortlist of cities to revisit, compare, and explore again later.
             </div>
         `;
         return;

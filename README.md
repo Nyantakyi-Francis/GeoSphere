@@ -1,14 +1,14 @@
 # GeoSphere
 
-GeoSphere is a front-end geography explorer that combines interactive mapping, location-based news, and world trivia in one polished experience. The project is built as a portfolio piece to show product thinking, modular JavaScript architecture, API integration, and local-first state management.
+GeoSphere is a geography explorer that combines interactive mapping, location-based news, and world trivia in one polished experience. It is designed to help users discover places through context, movement, and lightweight learning.
 
-## What the project demonstrates
+## What GeoSphere offers
 
 - A clear product concept instead of isolated API widgets
 - Vanilla JavaScript modules for state, services, location, and UI rendering
 - Resilient UX with loading states, empty states, and fallbacks
 - Local persistence for favorites, search history, session restore, and map state
-- A stronger presentation layer with responsive layout and case-study framing
+- A stronger presentation layer with responsive layout and clear place-discovery flows
 
 ## Features
 
@@ -56,8 +56,8 @@ Recommended deployment flow:
 2. Add the two environment variables in the Vercel project settings.
 3. Deploy to preview or production.
 
-## Portfolio talking points
+## Why GeoSphere works
 
-- GeoSphere is stronger than a typical API demo because the features support one user journey: understand a place quickly through context, content, and interaction.
+- GeoSphere is stronger than a typical geography app landing page because the features support one user journey: understand a place quickly through context, content, and interaction.
 - The app separates data fetching, persistence, location logic, and UI rendering into small modules, which makes the code easier to maintain and extend.
-- The interface includes real product details such as favorites, recent searches, session restore, and fallback content so the experience still feels complete under imperfect network conditions.
+- The interface includes useful details such as favorites, recent searches, session restore, and fallback content so the experience still feels complete under imperfect network conditions.

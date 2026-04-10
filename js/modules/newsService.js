@@ -13,19 +13,19 @@ const FALLBACK_NEWS = [
         title: 'Design snapshot: how city discovery apps build trust',
         description: 'A strong local explorer balances speed, clarity, and context so users know what they are looking at right away.',
         author: 'GeoSphere Demo Feed',
-        source: 'Portfolio Preview'
+        source: 'GeoSphere Journal'
     },
     {
         title: 'Product idea: make saved places feel like a travel notebook',
         description: 'Favorites, recent searches, and session memory turn a simple map search into an experience that feels personal and reusable.',
         author: 'GeoSphere Demo Feed',
-        source: 'Portfolio Preview'
+        source: 'GeoSphere Journal'
     },
     {
         title: 'Frontend note: resilient UI beats a blank screen',
         description: 'Thoughtful empty states and fallback content show product maturity even when a third-party API is unavailable.',
         author: 'GeoSphere Demo Feed',
-        source: 'Portfolio Preview'
+        source: 'GeoSphere Journal'
     }
 ];
 
