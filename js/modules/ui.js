@@ -6,7 +6,7 @@ export function renderNewsLoading() {
         return;
     }
 
-    container.innerHTML = Array.from({ length: 2 }, () => `
+    container.innerHTML = Array.from({ length: 3 }, () => `
         <article class="news-card loading-card" aria-hidden="true">
             <div class="loading-block loading-media"></div>
             <div class="news-card-body">
@@ -28,8 +28,8 @@ export function renderNewsCards(articles, city) {
     if (!Array.isArray(articles) || articles.length === 0) {
         container.innerHTML = `
             <div class="content-placeholder">
-                <strong>No stories were available.</strong>
-                <p>Try another place name or come back later for fresh results for ${escapeHtml(city || 'this location')}.</p>
+                <strong>No current headlines found.</strong>
+                <p>No headlines were available for ${escapeHtml(city || 'this location')} right now. Try another place or check back later.</p>
             </div>
         `;
         return;
@@ -84,7 +84,7 @@ export function renderTriviaLoading(message = 'Loading trivia...') {
 
     container.innerHTML = `
         <article class="trivia-card">
-            <p class="eyebrow">Trivia Lab</p>
+            <p class="eyebrow">Location trivia</p>
             <p class="trivia-question">${escapeHtml(message)}</p>
             <div class="loading-stack" aria-hidden="true">
                 <div class="loading-line"></div>
@@ -104,8 +104,8 @@ export function renderTrivia(triviaData) {
     if (!triviaData) {
         container.innerHTML = `
             <div class="content-placeholder">
-                <strong>No trivia available yet.</strong>
-                <p>Use the buttons above to request a new question.</p>
+                <strong>No trivia available right now.</strong>
+                <p>Try another question or switch to a different place.</p>
             </div>
         `;
         return;
@@ -114,7 +114,7 @@ export function renderTrivia(triviaData) {
     if (triviaData.type === 'fact' || !Array.isArray(triviaData.allAnswers)) {
         container.innerHTML = `
             <article class="trivia-card">
-                <p class="eyebrow">Quick Fact</p>
+                <p class="eyebrow">Location fact</p>
                 <h3 class="trivia-question">${escapeHtml(triviaData.question)}</h3>
                 <p class="trivia-copy">${escapeHtml(triviaData.answer)}</p>
                 ${triviaData.source ? `<p class="trivia-source">Source: ${escapeHtml(triviaData.source)}</p>` : ''}
@@ -192,7 +192,7 @@ export function renderFavorites(favorites) {
     if (!Array.isArray(favorites) || favorites.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                Save a place to build your own shortlist of cities to revisit, compare, and explore again later.
+                No saved places yet. Save the current place to keep it here.
             </div>
         `;
         return;
@@ -250,7 +250,7 @@ export function renderSearchHistory(history) {
     if (!Array.isArray(history) || history.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                Recent searches stay local to this browser. Once you search a few cities, they will appear here for one-click access.
+                No recent searches yet. Your latest place searches will appear here for one-click access.
             </div>
         `;
         return;
@@ -325,25 +325,66 @@ export function clearAppMessage() {
     banner.innerHTML = '';
 }
 
-export function showError(container, message) {
+export function showError(container, message, title = 'Something went wrong.') {
     if (!container) {
         return;
     }
 
     container.innerHTML = `
         <div class="content-placeholder content-error">
-            <strong>Something went wrong.</strong>
+            <strong>${escapeHtml(title)}</strong>
             <p>${escapeHtml(message)}</p>
         </div>
     `;
 }
 
-export function setFavoriteButtonLabel(isSaved) {
+export function renderMapFallback(options = {}) {
+    const container = document.getElementById('mapFallback');
+    const map = document.getElementById('map');
+
+    if (!container || !map) {
+        return;
+    }
+
+    container.innerHTML = `
+        <div class="map-fallback-card">
+            <h3>${escapeHtml(options.title || 'Map unavailable')}</h3>
+            <p>${escapeHtml(options.message || 'The map could not be shown right now.')}</p>
+            ${options.actionLabel
+                ? `<button type="button" class="button button-secondary button-small" data-map-action>${escapeHtml(options.actionLabel)}</button>`
+                : ''}
+        </div>
+    `;
+
+    container.classList.remove('hidden');
+    map.classList.add('is-unavailable');
+
+    const actionButton = container.querySelector('[data-map-action]');
+    if (actionButton && typeof options.onAction === 'function') {
+        actionButton.addEventListener('click', options.onAction);
+    }
+}
+
+export function clearMapFallback() {
+    const container = document.getElementById('mapFallback');
+    const map = document.getElementById('map');
+
+    if (!container || !map) {
+        return;
+    }
+
+    container.classList.add('hidden');
+    container.innerHTML = '';
+    map.classList.remove('is-unavailable');
+}
+
+export function setFavoriteButtonLabel(isSaved, hasLocation = true) {
     const button = document.getElementById('addFavoriteBtn');
     if (!button) {
         return;
     }
 
+    button.disabled = !hasLocation;
     button.textContent = isSaved ? 'Remove from favorites' : 'Save current place';
     button.classList.toggle('is-saved', isSaved);
 }

@@ -33,19 +33,31 @@ import {
     showAppMessage,
     clearAppMessage,
     showError,
-    setFavoriteButtonLabel
+    setFavoriteButtonLabel,
+    renderMapFallback,
+    clearMapFallback
 } from './modules/ui.js';
 
 const elements = {
     addFavoriteBtn: document.getElementById('addFavoriteBtn'),
+    activeModePill: document.getElementById('activeModePill'),
+    contentSummary: document.getElementById('contentSummary'),
+    currentPlaceMeta: document.getElementById('currentPlaceMeta'),
+    currentPlaceName: document.getElementById('currentPlaceName'),
+    currentPlaceStatus: document.getElementById('currentPlaceStatus'),
     factBtn: document.getElementById('factBtn'),
     factContainer: document.getElementById('fact'),
+    factsSectionNote: document.getElementById('factsSectionNote'),
     geographyTriviaBtn: document.getElementById('geographyTriviaBtn'),
     locationLabel: document.getElementById('locationLabel'),
     mapContainer: document.getElementById('map'),
+    mapSummary: document.getElementById('mapSummary'),
     newsContainer: document.getElementById('news'),
+    newsSectionNote: document.getElementById('newsSectionNote'),
+    saveStatePill: document.getElementById('saveStatePill'),
     searchForm: document.getElementById('searchForm'),
     searchInput: document.getElementById('searchInput'),
+    searchSubmitBtn: document.getElementById('searchSubmitBtn'),
     tabFacts: document.getElementById('tabFacts'),
     tabNews: document.getElementById('tabNews')
 };
@@ -66,14 +78,22 @@ function startApp() {
     const map = initializeMap(getMapState());
 
     let currentLocation = null;
+    let currentTab = userPreferences.lastActiveTab || 'news';
     let favorites = getFavorites();
+    let mapFailureShown = false;
 
     renderFavorites(favorites);
     renderSearchHistory(getSearchHistory());
     renderNewsLoading();
-    renderTriviaLoading('Loading the first question...');
-    setActiveTab(userPreferences.lastActiveTab || 'news');
-    setFavoriteButtonLabel(false);
+    renderTriviaLoading('Preparing trivia for your starting location...');
+    setActiveTab(currentTab);
+    updateSearchAvailability();
+    updateLocationUI(null);
+    updateActiveModeState();
+    updateContextActions();
+    setFavoriteButtonLabel(false, false);
+    updateFavoriteButton();
+    configureMapFallback();
 
     elements.searchForm.addEventListener('submit', handleSearchSubmit);
     elements.addFavoriteBtn.addEventListener('click', handleFavoriteToggle);
@@ -128,6 +148,25 @@ function startApp() {
     });
 
     if (map) {
+        map.on('load', () => {
+            clearMapFallback();
+            mapFailureShown = false;
+        });
+
+        map.on('error', () => {
+            if (mapFailureShown) {
+                return;
+            }
+
+            mapFailureShown = true;
+            renderMapFallback({
+                title: 'Map failed to load',
+                message: 'The map could not be displayed right now. You can still use search, saved places, news, and trivia.',
+                actionLabel: 'Retry map',
+                onAction: () => window.location.reload()
+            });
+        });
+
         map.on('moveend', () => {
             const center = map.getCenter();
             saveMapState({
@@ -204,10 +243,12 @@ function startApp() {
             saveLastSearch(location);
         }
 
-        updateLocationLabel(location.city);
+        updateLocationUI(location);
+        updateContextActions();
         updateFavoriteButton();
 
         if (map) {
+            clearMapFallback();
             updateMap(map, location.lat, location.lng);
         }
 
@@ -238,7 +279,11 @@ function startApp() {
             renderNewsCards(articles, city);
         } catch (error) {
             console.error('Error loading news:', error);
-            showError(elements.newsContainer, 'News could not be loaded right now.');
+            showError(
+                elements.newsContainer,
+                'Headlines are unavailable right now. Try another place or check back later.',
+                'News unavailable'
+            );
             throw error;
         }
     }
@@ -252,26 +297,32 @@ function startApp() {
             renderTrivia(triviaData);
         } catch (error) {
             console.error('Error loading trivia:', error);
-            showError(elements.factContainer, 'Trivia could not be loaded right now.');
+            showError(
+                elements.factContainer,
+                'Trivia is unavailable right now. Try again in a moment.',
+                'Trivia unavailable'
+            );
             throw error;
         }
     }
 
     function switchTab(tabName) {
+        currentTab = tabName;
         setActiveTab(tabName);
         savePreferences({ lastActiveTab: tabName });
-    }
-
-    function updateLocationLabel(cityName) {
-        elements.locationLabel.textContent = `Exploring ${cityName}`;
+        updateActiveModeState();
+        updateCurrentPlaceStatus();
     }
 
     function updateFavoriteButton() {
-        const isSaved = currentLocation
+        const hasLocation = Boolean(currentLocation);
+        const isSaved = hasLocation
             ? isFavorite(currentLocation.lat, currentLocation.lng)
             : false;
 
-        setFavoriteButtonLabel(isSaved);
+        setFavoriteButtonLabel(isSaved, hasLocation);
+        updateSaveStatePill(hasLocation, isSaved);
+        updateCurrentPlaceStatus();
     }
 
     async function restoreInitialLocation() {
@@ -335,4 +386,119 @@ function startApp() {
             });
         }
     }
+
+    function configureMapFallback() {
+        if (map) {
+            clearMapFallback();
+            return;
+        }
+
+        if (!hasMapboxToken()) {
+            renderMapFallback({
+                title: 'Map unavailable',
+                message: 'Map search needs a Mapbox token in this environment. Headlines, trivia, saved places, and search history still work.'
+            });
+            return;
+        }
+
+        renderMapFallback({
+            title: 'Map failed to load',
+            message: 'The map could not be displayed right now. You can still use the rest of the app.',
+            actionLabel: 'Retry map',
+            onAction: () => window.location.reload()
+        });
+    }
+
+    function updateSearchAvailability() {
+        const searchEnabled = hasMapboxToken();
+        elements.searchInput.disabled = !searchEnabled;
+        elements.searchSubmitBtn.disabled = !searchEnabled;
+        elements.searchInput.placeholder = searchEnabled
+            ? 'Search for a city, country, or landmark'
+            : 'Search unavailable until Mapbox is configured';
+    }
+
+    function updateLocationUI(location) {
+        if (!location) {
+            elements.currentPlaceName.textContent = 'Waiting for a location';
+            elements.currentPlaceMeta.textContent = 'Search for a city, country, or landmark to begin.';
+            elements.currentPlaceStatus.textContent = 'The selected place will appear here, along with its saved state and active mode.';
+            elements.locationLabel.textContent = 'Waiting for a location';
+            elements.mapSummary.textContent = 'Search for a place to center the map and refresh the live content below.';
+            elements.contentSummary.textContent = 'Showing results for the place you select.';
+            elements.newsSectionNote.textContent = 'Recent headlines related to your selected place.';
+            elements.factsSectionNote.textContent = 'Switch between general and geography questions for the current place.';
+            return;
+        }
+
+        elements.currentPlaceName.textContent = location.city;
+        elements.currentPlaceMeta.textContent = buildLocationMeta(location);
+        elements.locationLabel.textContent = `Viewing ${location.city}`;
+        elements.mapSummary.textContent = `Map centered on ${location.city}. Drag or zoom to inspect the surrounding area.`;
+        elements.contentSummary.textContent = `Showing results for ${location.city}.`;
+        elements.newsSectionNote.textContent = `Recent headlines related to ${location.city}.`;
+        elements.factsSectionNote.textContent = `Switch between general and geography questions for ${location.city}.`;
+        updateCurrentPlaceStatus();
+    }
+
+    function updateActiveModeState() {
+        elements.activeModePill.textContent = currentTab === 'news' ? 'News mode' : 'Trivia mode';
+    }
+
+    function updateSaveStatePill(hasLocation, isSaved) {
+        if (!hasLocation) {
+            elements.saveStatePill.textContent = 'No place selected';
+            elements.saveStatePill.classList.add('pill-muted');
+            return;
+        }
+
+        elements.saveStatePill.textContent = isSaved ? 'Saved' : 'Not saved';
+        elements.saveStatePill.classList.toggle('pill-muted', !isSaved);
+    }
+
+    function updateContextActions() {
+        const hasLocation = Boolean(currentLocation);
+        elements.factBtn.disabled = !hasLocation;
+        elements.geographyTriviaBtn.disabled = !hasLocation;
+    }
+
+    function updateCurrentPlaceStatus() {
+        if (!currentLocation) {
+            elements.currentPlaceStatus.textContent = 'The selected place will appear here, along with its saved state and active mode.';
+            return;
+        }
+
+        const isSaved = isFavorite(currentLocation.lat, currentLocation.lng);
+        if (isSaved) {
+            elements.currentPlaceStatus.textContent = `Saved to Favorites. ${currentTab === 'news' ? 'Headlines' : 'Trivia'} for ${currentLocation.city} are ready below.`;
+            return;
+        }
+
+        elements.currentPlaceStatus.textContent = `Currently viewing ${currentLocation.city}. Save it to Favorites or switch between news and trivia below.`;
+    }
+
+    function buildLocationMeta(location) {
+        const parts = [];
+
+        if (location.region) {
+            parts.push(location.region);
+        }
+
+        const coordinates = formatCoordinates(location.lat, location.lng);
+        if (coordinates) {
+            parts.push(coordinates);
+        }
+
+        return parts.length > 0 ? parts.join(' | ') : 'Selected location';
+    }
+}
+
+function formatCoordinates(lat, lng) {
+    if (typeof lat !== 'number' || typeof lng !== 'number') {
+        return '';
+    }
+
+    const latitude = `${Math.abs(lat).toFixed(2)} deg ${lat >= 0 ? 'N' : 'S'}`;
+    const longitude = `${Math.abs(lng).toFixed(2)} deg ${lng >= 0 ? 'E' : 'W'}`;
+    return `${latitude} | ${longitude}`;
 }

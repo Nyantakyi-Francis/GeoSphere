@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="main.css">
 </head>
 
-<body class="site-body">
+<body id="top" class="site-body">
     <div class="page-shell">
         <header class="site-header">
             <div class="brand">
@@ -38,79 +38,83 @@
                 </div>
                 <div>
                     <a href="index.html" class="brand-name">GeoSphere</a>
-                    <p class="brand-tagline">Atlas-style discovery for curious users, students, and travelers.</p>
+                    <p class="brand-tagline">Map a place, read the headlines, and learn something useful about it.</p>
                 </div>
             </div>
-
-            <form id="searchForm" class="search-bar">
-                <label class="sr-only" for="searchInput">Search for a location</label>
-                <input id="searchInput" type="text" placeholder="Search for a city, country, or landmark"
-                    autocomplete="off">
-                <button type="submit" class="button button-primary">Explore</button>
-            </form>
+            <nav class="header-links" aria-label="App sections">
+                <a href="#mapSection">Map</a>
+                <a href="#favoritesSection">Favorites</a>
+                <a href="#resultsSection">Results</a>
+            </nav>
         </header>
 
         <main class="page-content">
             <section class="panel hero">
-                <div>
-                    <p class="eyebrow">Live Place Discovery</p>
-                    <h1>Explore a place through mapping, headlines, and trivia.</h1>
+                <div class="hero-main">
+                    <p class="eyebrow">Explore a location</p>
+                    <h1>See where it is, what is happening there, and learn something new.</h1>
                     <p class="hero-text">
-                        GeoSphere brings together geospatial search, live headlines, and playful learning so you can get
-                        a feel for any place in one focused experience. Search a city, follow the story around it, and
-                        keep nearby discoveries within reach.
+                        Search any city, country, or landmark to update the map, headlines, trivia, and saved places in
+                        one working interface.
+                    </p>
+                    <form id="searchForm" class="hero-search">
+                        <label class="search-label" for="searchInput">Search for a city, country, or landmark</label>
+                        <div class="search-row">
+                            <input id="searchInput" type="text" placeholder="Search for a city, country, or landmark"
+                                autocomplete="off">
+                            <button id="searchSubmitBtn" type="submit" class="button button-primary">Explore</button>
+                        </div>
+                        <p class="search-help">Try places like Accra, Brazil, or Eiffel Tower.</p>
+                    </form>
+                </div>
+
+                <aside class="hero-state" aria-live="polite">
+                    <p class="eyebrow">Current place</p>
+                    <h2 id="currentPlaceName">Waiting for a location</h2>
+                    <p id="currentPlaceMeta" class="current-place-meta">Search for a city, country, or landmark to begin.</p>
+                    <div class="state-pills">
+                        <span id="saveStatePill" class="pill pill-muted">No place selected</span>
+                        <span id="activeModePill" class="pill">News mode</span>
+                    </div>
+                    <p id="currentPlaceStatus" class="current-place-status">
+                        The selected place will appear here, along with its saved state and active mode.
                     </p>
                     <div class="hero-actions">
                         <button id="addFavoriteBtn" type="button" class="button button-primary">Save current place</button>
-                        <a href="#newsSection" class="button button-secondary">View latest stories</a>
+                        <a href="#newsSection" class="button button-secondary">See headlines</a>
                     </div>
-                </div>
-
-                <div class="hero-meta">
-                    <article class="stat-card">
-                        <p class="stat-value">3</p>
-                        <p class="stat-label">Experience layers</p>
-                        <p class="stat-detail">Map search, live headlines, and trivia work together as one connected discovery flow.</p>
-                    </article>
-                    <article class="stat-card">
-                        <p class="stat-value">Local</p>
-                        <p class="stat-label">Browser memory</p>
-                        <p class="stat-detail">Favorites, search history, and session state persist without needing an account.</p>
-                    </article>
-                    <article class="stat-card">
-                        <p class="stat-value">Resilient</p>
-                        <p class="stat-label">Fallback behavior</p>
-                        <p class="stat-detail">The interface still tells a clear story when a third-party service slows down or fails.</p>
-                    </article>
-                </div>
+                </aside>
             </section>
 
             <div id="appMessage" class="status-banner hidden" role="status" aria-live="polite"></div>
 
             <section class="workspace-grid">
-                <div class="panel map-panel">
+                <div id="mapSection" class="panel map-panel">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">Discovery Mode</p>
-                            <h2 id="locationLabel">Exploring your location</h2>
-                            <p>Search for any city or let GeoSphere start nearby, then move between stories and trivia without losing context.</p>
+                            <p class="eyebrow">Map and selected place</p>
+                            <h2 id="locationLabel">Waiting for a location</h2>
+                            <p id="mapSummary">Search for a place to center the map and refresh the live content below.</p>
                         </div>
                         <div class="map-legend">
                             <span class="legend-pill">Drag to explore</span>
                             <span class="legend-pill">Scroll to zoom</span>
                         </div>
                     </div>
-                    <div id="map" class="map-frame" aria-label="Interactive map"></div>
+                    <div class="map-shell">
+                        <div id="mapFallback" class="map-fallback hidden" role="status" aria-live="polite"></div>
+                        <div id="map" class="map-frame" aria-label="Interactive map"></div>
+                    </div>
                 </div>
 
                 <aside class="sidebar">
-                    <section class="panel side-panel">
+                    <section id="favoritesSection" class="panel side-panel">
                         <div class="section-heading compact">
                             <div>
-                                <p class="eyebrow">Saved Places</p>
+                                <p class="eyebrow">Saved places</p>
                                 <h3>Favorites</h3>
                             </div>
-                            <p class="panel-note">Keep a shortlist of places worth revisiting, comparing, or planning around.</p>
+                            <p class="panel-note">Save a place and reopen it from here anytime.</p>
                         </div>
                         <div id="favoritesList" class="favorites-list"></div>
                     </section>
@@ -118,28 +122,36 @@
                     <section class="panel side-panel">
                         <div class="section-heading compact">
                             <div>
-                                <p class="eyebrow">Session Memory</p>
-                                <h3>Recent searches</h3>
+                                <p class="eyebrow">Recent searches</p>
+                                <h3>Search history</h3>
                             </div>
-                            <p class="panel-note">A local-only history makes the product feel more complete and useful.</p>
+                            <p class="panel-note">Your latest searches stay local to this browser for quick reuse.</p>
                         </div>
                         <div id="searchHistoryList" class="history-list"></div>
                     </section>
                 </aside>
             </section>
 
-            <section class="panel content-panel">
+            <section id="resultsSection" class="panel content-panel">
+                <div class="section-heading content-heading">
+                    <div>
+                        <p class="eyebrow">Live results</p>
+                        <h2>News and trivia</h2>
+                        <p id="contentSummary">Showing results for the place you select.</p>
+                    </div>
+                </div>
+
                 <div class="tabs" role="tablist" aria-label="Content sections">
-                    <button id="tabNews" class="tab-btn active-tab" type="button" aria-pressed="true">Local news</button>
-                    <button id="tabFacts" class="tab-btn" type="button" aria-pressed="false">Trivia lab</button>
+                    <button id="tabNews" class="tab-btn active-tab" type="button" aria-pressed="true">News</button>
+                    <button id="tabFacts" class="tab-btn" type="button" aria-pressed="false">Trivia</button>
                 </div>
 
                 <section id="newsSection" class="content-section">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">Editorial Feed</p>
-                            <h3>Latest coverage</h3>
-                            <p>Headlines that mention your selected place, rendered as quick-scan cards instead of a raw API dump.</p>
+                            <p class="eyebrow">News about this place</p>
+                            <h3>Headlines</h3>
+                            <p id="newsSectionNote">Recent headlines related to your selected place.</p>
                         </div>
                     </div>
                     <div id="news" class="news-grid" aria-live="polite"></div>
@@ -148,9 +160,9 @@
                 <section id="factsSection" class="content-section hidden">
                     <div class="section-heading">
                         <div>
-                            <p class="eyebrow">Interactive Learning</p>
-                            <h3>Trivia lab</h3>
-                            <p>Switch between general and geography-only questions to keep the educational angle sharp.</p>
+                            <p class="eyebrow">Location trivia</p>
+                            <h3>Question</h3>
+                            <p id="factsSectionNote">Switch between general and geography questions for the current place.</p>
                         </div>
                         <div class="trivia-actions">
                             <button id="factBtn" type="button" class="button button-primary button-small">New question</button>
@@ -160,24 +172,6 @@
                     <div id="fact" class="trivia-shell" aria-live="polite"></div>
                 </section>
             </section>
-
-            <section class="project-grid">
-                <article class="panel insight-card">
-                    <p class="eyebrow">Why GeoSphere</p>
-                    <h3>One place, multiple perspectives</h3>
-                    <p>GeoSphere helps you understand a location faster by combining navigation, current context, and quick learning in one place.</p>
-                </article>
-                <article class="panel insight-card">
-                    <p class="eyebrow">Built For Exploration</p>
-                    <h3>Pick up where you left off</h3>
-                    <p>Favorites, recent searches, and session memory make it easy to return to places you care about without starting from scratch.</p>
-                </article>
-                <article class="panel insight-card">
-                    <p class="eyebrow">Stay Oriented</p>
-                    <h3>Useful even when services slow down</h3>
-                    <p>Fallback states, saved context, and clear navigation help the experience stay readable when third-party content is delayed.</p>
-                </article>
-            </section>
         </main>
 
         <footer class="site-footer">
@@ -185,13 +179,14 @@
                 <div>
                     <p class="eyebrow">GeoSphere</p>
                     <p class="small-copy">
-                        Explore cities, landmarks, and current stories through a map-first experience designed for curious users, students, and travelers.
+                        Understand any place faster with a live map, current headlines, saved places, and quick trivia in one interface.
                     </p>
                 </div>
                 <div class="footer-links">
-                    <a href="index.html">Experience</a>
+                    <a href="#top">Explore app</a>
                     <a href="disclaimer.html">Disclaimer</a>
-                    <a href="mailto:nyantakyifrancis54@gmail.com">Email</a>
+                    <a href="https://nyantakyi-francis.github.io/portfolio/index.html" target="_blank" rel="noopener noreferrer">Portfolio</a>
+                    <a href="mailto:nyantakyifrancis54@gmail.com">Email us</a>
                 </div>
             </div>
         </footer>

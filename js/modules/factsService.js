@@ -11,37 +11,32 @@ const FALLBACK_FACTS = [
 ];
 
 export async function fetchTriviaQuestion(city) {
-    try {
-        const response = await fetch(
-            `${TRIVIA_API_BASE_URL}?amount=1&type=multiple&encode=url3986`
-        );
+    const response = await fetch(
+        `${TRIVIA_API_BASE_URL}?amount=1&type=multiple&encode=url3986`
+    );
 
-        if (!response.ok) {
-            throw new Error(`OpenTriviaDB returned ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.response_code !== 0 || !Array.isArray(data.results) || data.results.length === 0) {
-            return getFallbackTrivia(city);
-        }
-
-        const trivia = data.results[0];
-        const correctAnswer = decodeText(trivia.correct_answer);
-        const incorrectAnswers = trivia.incorrect_answers.map(answer => decodeText(answer));
-
-        return {
-            question: decodeText(trivia.question),
-            answer: correctAnswer,
-            allAnswers: shuffleArray([correctAnswer, ...incorrectAnswers]),
-            category: decodeText(trivia.category),
-            difficulty: formatDifficulty(trivia.difficulty),
-            type: 'trivia',
-            source: 'OpenTriviaDB'
-        };
-    } catch (error) {
-        console.error('Trivia loading failed:', error);
-        return getFallbackTrivia(city);
+    if (!response.ok) {
+        throw new Error(`OpenTriviaDB returned ${response.status}`);
     }
+
+    const data = await response.json();
+    if (data.response_code !== 0 || !Array.isArray(data.results) || data.results.length === 0) {
+        return null;
+    }
+
+    const trivia = data.results[0];
+    const correctAnswer = decodeText(trivia.correct_answer);
+    const incorrectAnswers = trivia.incorrect_answers.map(answer => decodeText(answer));
+
+    return {
+        question: decodeText(trivia.question),
+        answer: correctAnswer,
+        allAnswers: shuffleArray([correctAnswer, ...incorrectAnswers]),
+        category: decodeText(trivia.category),
+        difficulty: formatDifficulty(trivia.difficulty),
+        type: 'trivia',
+        source: 'OpenTriviaDB'
+    };
 }
 
 export async function getRandomFact() {
@@ -71,37 +66,32 @@ export async function getRandomFact() {
 }
 
 export async function fetchGeographyTrivia(city) {
-    try {
-        const response = await fetch(
-            `${TRIVIA_API_BASE_URL}?amount=1&category=22&type=multiple&encode=url3986`
-        );
+    const response = await fetch(
+        `${TRIVIA_API_BASE_URL}?amount=1&category=22&type=multiple&encode=url3986`
+    );
 
-        if (!response.ok) {
-            throw new Error(`OpenTriviaDB returned ${response.status}`);
-        }
-
-        const data = await response.json();
-        if (data.response_code !== 0 || !Array.isArray(data.results) || data.results.length === 0) {
-            return fetchTriviaQuestion(city);
-        }
-
-        const trivia = data.results[0];
-        const correctAnswer = decodeText(trivia.correct_answer);
-        const incorrectAnswers = trivia.incorrect_answers.map(answer => decodeText(answer));
-
-        return {
-            question: decodeText(trivia.question),
-            answer: correctAnswer,
-            allAnswers: shuffleArray([correctAnswer, ...incorrectAnswers]),
-            category: 'Geography',
-            difficulty: formatDifficulty(trivia.difficulty),
-            type: 'trivia',
-            source: 'OpenTriviaDB'
-        };
-    } catch (error) {
-        console.error('Geography trivia loading failed:', error);
-        return fetchTriviaQuestion(city);
+    if (!response.ok) {
+        throw new Error(`OpenTriviaDB returned ${response.status}`);
     }
+
+    const data = await response.json();
+    if (data.response_code !== 0 || !Array.isArray(data.results) || data.results.length === 0) {
+        return null;
+    }
+
+    const trivia = data.results[0];
+    const correctAnswer = decodeText(trivia.correct_answer);
+    const incorrectAnswers = trivia.incorrect_answers.map(answer => decodeText(answer));
+
+    return {
+        question: decodeText(trivia.question),
+        answer: correctAnswer,
+        allAnswers: shuffleArray([correctAnswer, ...incorrectAnswers]),
+        category: 'Geography',
+        difficulty: formatDifficulty(trivia.difficulty),
+        type: 'trivia',
+        source: 'OpenTriviaDB'
+    };
 }
 
 export function checkAnswer(triviaData, userAnswer) {
@@ -114,17 +104,6 @@ export function checkAnswer(triviaData, userAnswer) {
     return {
         correct: isCorrect,
         correctAnswer: triviaData.answer
-    };
-}
-
-function getFallbackTrivia(city) {
-    return {
-        question: `Quick fact about ${city || 'the world'}`,
-        answer: FALLBACK_FACTS[Math.floor(Math.random() * FALLBACK_FACTS.length)],
-        type: 'fact',
-        category: 'Geography',
-        difficulty: 'Easy',
-        source: 'Local fallback'
     };
 }
 

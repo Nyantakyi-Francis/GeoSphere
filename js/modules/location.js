@@ -12,23 +12,28 @@ export function initializeMap(savedMapState) {
         return null;
     }
 
-    mapboxgl.accessToken = getMapboxToken();
+    try {
+        mapboxgl.accessToken = getMapboxToken();
 
-    const initialState = {
-        ...DEFAULT_MAP_STATE,
-        ...savedMapState
-    };
+        const initialState = {
+            ...DEFAULT_MAP_STATE,
+            ...savedMapState
+        };
 
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v12',
-        center: initialState.center,
-        zoom: initialState.zoom
-    });
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: initialState.center,
+            zoom: initialState.zoom
+        });
 
-    map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+        map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    return map;
+        return map;
+    } catch (error) {
+        console.error('Map initialization failed:', error);
+        return null;
+    }
 }
 
 export function updateMap(map, lat, lng, zoom = 10) {
